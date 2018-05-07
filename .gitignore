@@ -1,0 +1,6 @@
+.idea
+data/mscoco_bbdf.json
+data/mscoco_bbdf.json.gz
+data/refcoco_refdf.json
+data/refcoco_refdf.json.gz
+venv/

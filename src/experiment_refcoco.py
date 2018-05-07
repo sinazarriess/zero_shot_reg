@@ -16,9 +16,10 @@ max_epochs      = 100
 num_runs        = 3
 minibatch_size  = 50
 
-results_data_dir   = '/media/data/sinaza/034-iconic-gesture/results-exp'
+#results_data_dir   = '/media/data/sinaza/034-iconic-gesture/results-exp'
+results_data_dir = '/media/compute/vol/dsg/lilian/testrun/results'
 #raw_input_data_dir = '.'
-raw_input_data_dir = '/media/dsgserve1_shkbox/036_object_parts'
+#raw_input_data_dir = '/media/dsgserve1_shkbox/036_object_parts'
 min_token_freq = 3
 layer_size = 512
 method = 'inject' # 'merge'
@@ -85,10 +86,12 @@ if __name__ == '__main__':
 
 
     #with io.open(raw_input_data_dir+'/PreProcOut/refcoco_refrnn.json', 'r', encoding='utf-8') as captions_f:
-    with io.open(raw_input_data_dir+'/PreProcOut/refcoco_refrnn_compositionalspl.json', 'r', encoding='utf-8') as captions_f:
+    #with io.open(raw_input_data_dir+'/PreProcOut/refcoco_refrnn_compositionalspl.json', 'r', encoding='utf-8') as captions_f:
+    with io.open('/media/compute/vol/dsg/lilian/testrun/refcoco_refrnn.json', 'r', encoding='utf-8') as captions_f:
         captions_data = json.load(captions_f)['images']
     #features = scipy.io.loadmat(raw_input_data_dir+'/visual_genome_vgg19_feats_small.mat')['feats'].T #image features matrix are transposed
-    features = scipy.io.loadmat(raw_input_data_dir+'/ExtrFeatsOut/refcoco_vgg19_rnnpreproc.mat')['feats'].T #image features matrix are transposed
+    #features = scipy.io.loadmat(raw_input_data_dir+'/ExtrFeatsOut/refcoco_vgg19_rnnpreproc.mat')['feats'].T #image features matrix are transposed
+    features = scipy.io.loadmat('/media/compute/vol/dsg/lilian/testrun/refcoco_vgg19_rnnpreproc.mat')['feats'].T
 
     raw_dataset = {
                 'train': { 'filenames': list(), 'images': list(), 'captions': list() },

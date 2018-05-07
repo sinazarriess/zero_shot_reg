@@ -1,0 +1,87 @@
+2018-05-04 16:45:03.476769: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2018-05-04 16:45:03.984471: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1356] Found device 0 with properties: 
+name: GeForce GTX 1080 Ti major: 6 minor: 1 memoryClockRate(GHz): 1.582
+pciBusID: 0000:03:00.0
+totalMemory: 10.91GiB freeMemory: 10.75GiB
+2018-05-04 16:45:03.984506: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0
+2018-05-04 16:45:04.373245: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-05-04 16:45:04.373298: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 
+2018-05-04 16:45:04.373306: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N 
+2018-05-04 16:45:04.373607: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10407 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080 Ti, pci bus id: 0000:03:00.0, compute capability: 6.1)
+2018-05-04 16:53:29.061495: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0
+2018-05-04 16:53:29.061574: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-05-04 16:53:29.061583: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 
+2018-05-04 16:53:29.061589: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N 
+2018-05-04 16:53:29.061748: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10407 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080 Ti, pci bus id: 0000:03:00.0, compute capability: 6.1)
+2018-05-04 17:02:16.725472: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0
+2018-05-04 17:02:16.725550: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-05-04 17:02:16.725558: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 
+2018-05-04 17:02:16.725563: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N 
+2018-05-04 17:02:16.725693: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10407 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080 Ti, pci bus id: 0000:03:00.0, compute capability: 6.1)
+raw data set 42279
+vocab: 2967
+Train captions (120266, 40)
+Training...
+
+----------------------------------------------------------------------------------------------------
+refcoco_refrnn_compositional 3 512 inject 1
+
+embedded shape:  (?, ?, 512)
+epoch	val loss	duration
+1	139866.292	52.0
+save model /media/compute/vol/dsg/lilian/testrun/results/inject_refcoco_refrnn_compositional_3_512_1/model
+2	135185.858	52.0
+save model /media/compute/vol/dsg/lilian/testrun/results/inject_refcoco_refrnn_compositional_3_512_1/model
+3	134302.564	51.0
+save model /media/compute/vol/dsg/lilian/testrun/results/inject_refcoco_refrnn_compositional_3_512_1/model
+4	133746.364	53.0
+save model /media/compute/vol/dsg/lilian/testrun/results/inject_refcoco_refrnn_compositional_3_512_1/model
+5	134874.641	53.0
+
+evaluating...
+
+
+Duration: 503.0 s
+
+
+----------------------------------------------------------------------------------------------------
+refcoco_refrnn_compositional 3 512 inject 2
+
+embedded shape:  (?, ?, 512)
+epoch	val loss	duration
+1	139687.995	54.0
+save model /media/compute/vol/dsg/lilian/testrun/results/inject_refcoco_refrnn_compositional_3_512_2/model
+2	135312.982	53.0
+save model /media/compute/vol/dsg/lilian/testrun/results/inject_refcoco_refrnn_compositional_3_512_2/model
+3	134292.135	53.0
+save model /media/compute/vol/dsg/lilian/testrun/results/inject_refcoco_refrnn_compositional_3_512_2/model
+4	133723.76	53.0
+save model /media/compute/vol/dsg/lilian/testrun/results/inject_refcoco_refrnn_compositional_3_512_2/model
+5	135286.574	53.0
+
+evaluating...
+
+
+Duration: 527.0 s
+
+
+----------------------------------------------------------------------------------------------------
+refcoco_refrnn_compositional 3 512 inject 3
+
+embedded shape:  (?, ?, 512)
+epoch	val loss	duration
+1	139705.479	54.0
+save model /media/compute/vol/dsg/lilian/testrun/results/inject_refcoco_refrnn_compositional_3_512_3/model
+2	135308.146	53.0
+save model /media/compute/vol/dsg/lilian/testrun/results/inject_refcoco_refrnn_compositional_3_512_3/model
+3	134311.898	53.0
+save model /media/compute/vol/dsg/lilian/testrun/results/inject_refcoco_refrnn_compositional_3_512_3/model
+4	134023.248	54.0
+save model /media/compute/vol/dsg/lilian/testrun/results/inject_refcoco_refrnn_compositional_3_512_3/model
+5	135495.978	53.0
+
+evaluating...
+
+
+Duration: 515.0 s
+
