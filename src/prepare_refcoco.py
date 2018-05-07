@@ -1,14 +1,15 @@
-import pandas as pd
+
 import numpy as np
-import nltk
-from random import sample
+#import nltk
+#from random import sample
 from tqdm import tqdm
 import scipy.io
 import json
+import pandas as pd
 from collections import defaultdict
 
-refdf = pd.read_json("/media/dsgserve1_shkbox/036_object_parts/PreProcOut/refcoco_refdf.json",orient="split",compression="gzip")
-with open("/media/dsgserve1_shkbox/036_object_parts/PreProcOut/refcoco_splits.json") as f:
+refdf = pd.read_json("../data/refcoco/refcoco_refdf.json.gz",orient="split",compression="gzip")
+with open("../data/refcoco/refcoco_splits.json") as f:
     splits = json.load(f)
 
 splmap = {'val':'val','train':'train','testA':'test','testB':'test'}
@@ -35,7 +36,7 @@ for ix,row in refdf.iterrows():
 print "Objects",len(obj2phrases)
 
 
-X = np.load("/media/dsgserve1_shkbox/036_object_parts/ExtrFeatsOut/mscoco_vgg19.npz")
+X = np.load("../data/refcoco/mscoco_vgg19_refcoco.npz")
 X = X['arr_0']
 
 print "X",X.shape
@@ -81,9 +82,9 @@ print "shape", vgg_mat.shape
 vgg_mat =vgg_mat.T
 
 print "dump image matrix"
-scipy.io.savemat('/media/dsgserve1_shkbox/036_object_parts/ExtrFeatsOut/refcoco_vgg19_rnnpreproc.mat',{'feats':vgg_mat})
+scipy.io.savemat('/media/compute/vol/dsg/lilian/testrun/refcoco_vgg19_rnnpreproc.mat',{'feats':vgg_mat})
 
 print "dump data set"
 dataset = {'images':im_list,'dataset':'refcoco_rnn'}
-with open('/media/dsgserve1_shkbox/036_object_parts/PreProcOut/refcoco_refrnn.json', 'w') as f:
+with open('/media/compute/vol/dsg/lilian/testrun/refcoco_refrnn.json', 'w') as f:
     json.dump(dataset,f)
