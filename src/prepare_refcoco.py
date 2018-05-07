@@ -23,15 +23,12 @@ obj2phrases = defaultdict(list)
 obj2split = {}
 split2obj = {'train':[],'test':[]}
 
-
-
 for ix,row in refdf.iterrows():
     #phrases = [preprocess_annotation(p.strip()) for p in row['collected_annotation'].split(',')]
     #print phrases
     objectid = (row['image_id'],row['region_id'])
     obj2phrases[objectid].append(row['refexp'].split())
     obj2split[objectid] = file2split[row['image_id']]
-
 
 print "Objects",len(obj2phrases)
 
