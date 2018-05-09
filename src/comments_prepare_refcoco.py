@@ -5,14 +5,13 @@ import numpy as np
 import tqdm
 import scipy
 
-# REFCOCO Daten
 refcoco_data = pd.read_json("../data/refcoco/refcoco_refdf.json.gz",orient="split",compression="gzip")
 with open("../data/refcoco/refcoco_splits.json") as f:
     splits = json.load(f)
 
 splitmap = {'val':'val','train':'train','testA':'test','testB':'test'}
-# für jede Gruppe im Split --> für jeden Eintrag --> erzeuge Eintrag in neuem Dictionary
-# file2split ist nur dafür da, testA und testB in "test" zu verwandeln?
+# for every group in split --> for every entry --> make entry in new dict
+# file2split just translates testA and testB to "test"?
 new_split_dict = {val:splitmap[key] for key in splits for val in splits[key]}
 
 # dict of objectids and ref exps
@@ -30,7 +29,7 @@ for index, row in refcoco_data.iterrows():
 
 # Image Features  --> numpy npz file includes one key/array, arr_0
 npz_file = np.load("../data/refcoco/mscoco_vgg19_refcoco.npz")
-extracted_features = npz_file['arr_0']   #shape is (49865, 4103)
+extracted_features = npz_file['arr_0']
 
 img_counter = 0
 snt_counter = 0
