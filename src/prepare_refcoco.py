@@ -73,10 +73,14 @@ for oitem in tqdm(obj2phrases):
 
 print "make final mat"
 vgg_mat = np.array(im_mat)
+print "vgg_mat[1][0]", vgg_mat[1][0]  # 1.0
 vgg_mat = vgg_mat[:,3:]
-print "shape", vgg_mat.shape
+print "shape", vgg_mat.shape #(49865, 4103)
+print "vgg_mat[1][0]", vgg_mat[1][0]  # 0.0729042887688
     
 vgg_mat =vgg_mat.T
+print "shape after t", vgg_mat.shape #(4103, 49865)
+print "vgg_mat[1][0]", vgg_mat[1][0] # 0.0
 
 print "dump image matrix"
 scipy.io.savemat('/media/compute/vol/dsg/lilian/testrun/refcoco_vgg19_rnnpreproc.mat',{'feats':vgg_mat})
