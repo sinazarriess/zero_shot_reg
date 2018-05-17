@@ -15,7 +15,7 @@ import io
 max_epochs      = 100
 num_runs        = 3
 minibatch_size  = 50
-results_data_dir = '/media/compute/vol/dsg/lilian/testrun_after_refactoring/results'
+results_data_dir = '../localtest'
 min_token_freq = 3
 layer_size = 512
 method = 'inject' # 'merge'
@@ -315,82 +315,4 @@ if __name__ == '__main__':
         sess.run(tf.global_variables_initializer())
         saver = tf.train.Saver()
 
-        num_params = 0
-        for v in sess.graph.get_collection('trainable_variables'):
-            num_params += np.prod(v.get_shape()).value
-
-        print('epoch', 'val loss', 'duration', sep='\t')
-        run_start = start = timeit.default_timer()
-
-        # validation_loss = 0
-        # for i in range(len(test_images)//minibatch_size):
-        #    minibatch_validation_loss = sess.run(total_loss, feed_dict={
-        #                                                            seq_in:     val_captions_in [i*minibatch_size:(i+1)*minibatch_size],
-        #                                                            seq_len:    val_captions_len[i*minibatch_size:(i+1)*minibatch_size],
-        #                                                            seq_target: val_captions_out[i*minibatch_size:(i+1)*minibatch_size],
-        #                                                            image:      test_images[i*minibatch_size:(i+1)*minibatch_size]
-        #                                                        })
-        #    validation_loss += minibatch_validation_loss
-        # print(0, round(validation_loss, 3), round(timeit.default_timer() - start), sep='\t')
-        last_validation_loss = 1000000
-
-        trainingset_indexes = list(range(len(train_images)))
-        for epoch in range(1, max_epochs + 1):
-            random.shuffle(trainingset_indexes)
-
-            start = timeit.default_timer()
-            for i in range(len(trainingset_indexes) // minibatch_size):
-                minibatch_indexes = trainingset_indexes[i * minibatch_size:(i + 1) * minibatch_size]
-                sess.run(train_step, feed_dict={
-                    seq_in: train_captions_in[minibatch_indexes],
-                    seq_len: train_captions_len[minibatch_indexes],
-                    seq_target: train_captions_out[minibatch_indexes],
-                    image: train_images[minibatch_indexes]
-                })
-
-            validation_loss = 0
-            for i in range(len(test_images) // minibatch_size):
-                minibatch_validation_loss = sess.run(total_loss, feed_dict={
-                    seq_in: val_captions_in[i * minibatch_size:(i + 1) * minibatch_size],
-                    seq_len: val_captions_len[i * minibatch_size:(i + 1) * minibatch_size],
-                    seq_target: val_captions_out[i * minibatch_size:(i + 1) * minibatch_size],
-                    image: val_images[i * minibatch_size:(i + 1) * minibatch_size]  # test images
-                })
-                validation_loss += minibatch_validation_loss
-            print(epoch, round(validation_loss, 3), round(timeit.default_timer() - start), sep='\t')
-            if validation_loss > last_validation_loss:
-                break
-            last_validation_loss = validation_loss
-            print("save model", results_data_dir + '/' + model_name + '/model')
-            saver.save(sess, results_data_dir + '/' + model_name + '/model')
-
-        saver.restore(sess, tf.train.latest_checkpoint(results_data_dir + '/' + model_name))
-
-        print()
-        print('evaluating...')
-        print()
-
-        captions = list()
-        for (i, image_input) in enumerate(raw_dataset['test']['images']):
-            caption = generate_sequence_beamsearch(lambda prefixes: sess.run(last_prediction, feed_dict={
-                seq_in: prefixes,
-                seq_len: [len(p) for p in prefixes],
-                image: image_input.reshape([1, -1]).repeat(len(prefixes), axis=0)
-            }))
-            captions.append(caption)
-
-        vocab_used = len({word for caption in captions for word in caption.split(' ')})
-
-        with open(results_data_dir + '/' + model_name + '/generated_captions.json', 'w') as f:
-            print(str(json.dumps([
-                {
-                    'image_id': image_id,
-                    'caption': caption
-                }
-                for (image_id, caption) in enumerate(captions)
-            ])), file=f)
-
-        print()
-        print('Duration:', round(timeit.default_timer() - run_start), 's')
-        print()
-
+        file_writer = tf.summary.FileWriter(results_data_dir, sess.graph)
