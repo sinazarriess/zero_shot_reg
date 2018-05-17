@@ -3,4 +3,8 @@ data/mscoco_bbdf.json
 data/mscoco_bbdf.json.gz
 data/refcoco_refdf.json
 data/refcoco_refdf.json.gz
+testrun/refcoco_refrnn.json
+testrun/refcoco_vgg19_rnnpreproc.mat
+testrun/results/
 venv/
+coco-caption/
