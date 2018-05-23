@@ -37,8 +37,8 @@ def evaluate(reference_path, candidate_path, split='val'):
     with open(candidate_path, 'rb') as f:
         cand = json.load(f)
     
-    print "ref keys",len(ref),ref.keys()[:10]    
-    print "cand keys",len(cand),cand.keys()[:10]    
+    print "ref keys",len(ref), ref.keys()[:10]
+    print "cand keys",len(cand), cand.keys()[:10]
     print set(ref.keys())-set(cand.keys())
     sortkeys = sorted(ref.keys())
     refsort = {k:ref[k] for k in sortkeys}
