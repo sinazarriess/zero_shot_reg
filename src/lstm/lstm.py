@@ -3,6 +3,8 @@ import os
 import tensorflow as tf
 import numpy as np
 
+from collections import defaultdict
+
 class LSTM():
 
     def __init__(self, run, vocab_size):
@@ -96,6 +98,27 @@ class LSTM():
         tf.summary.scalar("loss", self.total_loss)
         tf.summary.histogram("histogram loss", self.total_loss)
         self.summary_op = tf.summary.merge_all()
+
+    def generate_captions(self, raw_dataset, beam, sess):
+        oids = list()
+        captions = list()
+        for (i, image_input) in enumerate(raw_dataset['test']['images']):
+            caption = beam.generate_sequence_beamsearch(lambda prefixes: sess.run(self.last_prediction, feed_dict={
+                self.seq_in: prefixes,
+                self.seq_len: [len(p) for p in prefixes],
+                self.image: image_input.reshape([1, -1]).repeat(len(prefixes), axis=0)
+            }))
+            captions.append(caption)
+
+        for (i, item) in enumerate(raw_dataset['test']['filenames']):
+            oids.append(item.split("_")[1])
+
+        dict4eval = defaultdict(list)
+        for (idx, pair) in enumerate(zip(oids, captions)):
+            dict4eval[pair[0]] = pair[1]
+        return dict4eval
+
+
 
  #       sess = tf.Session()
  #       sess.run(tf.global_variables_initializer())

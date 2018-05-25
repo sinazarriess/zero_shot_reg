@@ -98,7 +98,7 @@ if __name__ == '__main__':
     selected_img_features = [] #alias img_mat
 
     ########### load and prepare referring expressions dataset ##############
-    refcoco_data = pd.read_json("../data/refcoco/refcoco_refdf.json.gz",orient="split",compression="gzip")
+    refcoco_data = pd.read_json("../data/refcoco/refcoco_refdf.json.gz", orient="split", compression="gzip")
     with open("../data/refcoco/refcoco_splits.json") as f:
         splits = json.load(f)
     #  TODO  generate own split for zero-shot learning
