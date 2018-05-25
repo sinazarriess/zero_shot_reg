@@ -67,7 +67,7 @@ class Learn:
 
         saver.restore(sess, tf.train.latest_checkpoint(p.results_data_dir + '/' + model.model_name))
 
-        print('\nevaluating...\n')
+
 
         captions = list()
         searcher = beam.Search(data.index_to_token)
@@ -91,5 +91,11 @@ class Learn:
             ])), file = f)
 
         print('\nDuration:', round(timeit.default_timer() - run_start), 's\n')
+        print('\nevaluating...\n')
 
+#### new
+        dict4eval = model.generate_captions(data.raw_dataset, searcher, sess)
+        with open('/media/compute/vol/dsg/lilian/src/' + model.model_name + '-candrefdict.json', 'w') as f:
+            json.dump(dict4eval, f)
 
+        print('\n wrote new json\n')

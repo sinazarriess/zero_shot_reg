@@ -13,3 +13,4 @@ if __name__ == '__main__':
         model = lstm.LSTM(run, data_interface.vocab_size)
         model.build_network()
         training.run_training(model, data_interface)
+
