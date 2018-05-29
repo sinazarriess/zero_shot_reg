@@ -13,7 +13,7 @@ import io
 
 ############ params ####################################################
 max_epochs      = 100
-num_runs        = 3
+num_runs        = 1 #  todo !! waren 3
 minibatch_size  = 50
 results_data_dir = '/media/compute/vol/dsg/lilian/testrun_after_refactoring/results'
 min_token_freq = 3
@@ -394,3 +394,22 @@ if __name__ == '__main__':
         print('Duration:', round(timeit.default_timer() - run_start), 's')
         print()
 
+######### new
+        oids = list()
+        captions_new = list()
+        for (i, image_input) in enumerate(raw_dataset['test']['images']):
+            caption = generate_sequence_beamsearch(lambda prefixes: sess.run(last_prediction, feed_dict={
+                seq_in: prefixes,
+                seq_len: [len(p) for p in prefixes],
+                image: image_input.reshape([1, -1]).repeat(len(prefixes), axis=0)
+            }))
+            captions_new.append([caption]) #new
+
+        for (i, item) in enumerate(raw_dataset['test']['filenames']):
+            oids.append(item.split("_")[1])
+
+        dict4eval = defaultdict(list)
+        for (idx, pair) in enumerate(zip(oids, captions_new)):
+            dict4eval[pair[0]] = pair[1]
+        with open(results_data_dir + '/' + '4evalrefactoredexp' + model_name + '.json', 'w') as f:
+            json.dump(dict4eval, f)

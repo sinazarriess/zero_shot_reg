@@ -95,7 +95,7 @@ class Learn:
 
 #### new
         dict4eval = model.generate_captions(data.raw_dataset, searcher, sess)
-        with open('/media/compute/vol/dsg/lilian/src/' + model.model_name + '-candrefdict.json', 'w') as f:
+        with open('/media/compute/vol/dsg/lilian/src/' + '4evalafter2ndrefactoring' + model.model_name + '.json', 'w') as f:
             json.dump(dict4eval, f)
 
         print('\n wrote new json\n')

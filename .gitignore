@@ -8,3 +8,7 @@ testrun/refcoco_vgg19_rnnpreproc.mat
 testrun/results/
 venv/
 coco-caption/
+src/eval/jsons/
+src/.ipynb_checkpoints/
+.ipynb_checkpoints/
+*.pyc
