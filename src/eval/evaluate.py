@@ -1,47 +1,46 @@
 import pandas as pd
 import json
+import os
 from collections import defaultdict
 import numpy as np
 import bleu
 
 test_ids = []
 
-old = "candrefdict_inject_refcoco_refrnn_compositional_3_512_1.json"
-candidate_path_1 = "jsons/4evalrefactoredexpinject_refcoco_refrnn_compositional_3_512_1.json"  # original script output
-candidate_path_2 = "jsons/4evalafter2ndrefactoringinject_refcoco_refrnn_compositional_3_512_1.json" # output of oo code
-reference_data_path = "../../data/refcoco_refdf.json.gz"
+candidate_path_1 = 'jsons/4evalrefactoredexpinject_refcoco_refrnn_compositional_3_512_'  # original script output
+candidate_path_2 = 'jsons/4evalafter2ndrefactoringinject_refcoco_refrnn_compositional_3_512_' # output of oo code
+reference_dict_path = 'jsons/test.json'
+reference_data_path = '../../data/refcoco_refdf.json.gz'
 
 class Evalutator:
     def __init__(self):
 
-        with open(candidate_path_1, "r") as f:
-            self.candidate_1 = json.load(f)  # correct format
-
-        self.prepare_ref_data()
 
 
-        print len(self.refdict4eval.keys())
-        print len(self.candidate_1.keys())
+        if os.path.exists(reference_dict_path):
+            with open(reference_dict_path, "r") as f:
+                self.refdict4eval = json.load(f)  # correct format
 
-        print self.refdict4eval["1721891"][0]
-    #    print self.candidate_1["1721891"]
+        else:
+            self.refdict4eval = defaultdict()
+            self.prepare_ref_data()
 
+
+    def run_eval(self, candidate):
+        with open(candidate, "r") as f:
+            cand = json.load(f)  # correct format
+
+        # keys without image features have to be filtered out - this is the easiest way without checking image vectors
         for key in self.refdict4eval.keys():
-            if not key in self.candidate_1.keys():
+            if not key in cand.keys():
                 del self.refdict4eval[key]
 
-        print len(self.refdict4eval.keys())
-        print len(self.candidate_1.keys())
+        assert len(self.refdict4eval.keys()) == len(cand.keys())
 
-        f = open('test.out', 'wb')
-        for i in range(len(test_ids)):
-            f.write("%i\n" % (test_ids[i]))
-        f.close()
-
-        with open('jsons/test.json', 'w') as f:
+        with open(reference_dict_path, 'w') as f:
             json.dump(self.refdict4eval, f)
 
-        bleu.evaluate("jsons/test.json", candidate_path_1)
+        return bleu.evaluate(reference_dict_path, candidate, True)
 
     def prepare_ref_data(self):
         refcoco_data = pd.read_json(reference_data_path, orient="split", compression="gzip")
@@ -63,8 +62,6 @@ class Evalutator:
             self.obj2phrases[objectid].append(row['refexp'])#.split())
             self.obj2split[objectid] = new_split_dict[row['image_id']]
 
-        self.refdict4eval = defaultdict()
-
         for obj2phrases_item in self.obj2phrases:  # tqdm(obj2phrases):
             split = self.obj2split[obj2phrases_item]
 
@@ -78,3 +75,17 @@ class Evalutator:
 
 if __name__ == '__main__':
     eval = Evalutator()
+
+    score_1 = 0
+    score_2 = 0
+
+    for i in range(1,4):
+        print "evaluate " + candidate_path_1 + str(i) + '.json'
+        score_1 += eval.run_eval(candidate_path_1 + str(i) + '.json')['Bleu_1']
+
+    for i in range(1, 4):
+        print "evaluate " + candidate_path_2 + str(i) + '.json'
+        score_2 += eval.run_eval(candidate_path_2 + str(i) + '.json')['Bleu_1']
+
+    print "Final average BLEU_1 score Candidate 1: " + str(score_1 / 3.0)
+    print "Final average BLEU_1 score Candidate 2: " + str(score_2 / 3.0)
