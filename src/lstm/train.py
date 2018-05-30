@@ -72,7 +72,7 @@ class Learn:
         captions = list()
         searcher = beam.Search(data.index_to_token)
         for (i, image_input) in enumerate(data.raw_dataset['test']['images']):
-            caption = searcher.generate_sequence_beamsearch(lambda prefixes: sess.run(model.last_prediction, feed_dict={  #todo! last prediction found?
+            caption = searcher.generate_sequence_beamsearch(lambda prefixes: sess.run(model.last_prediction, feed_dict={
                 model.seq_in: prefixes,
                 model.seq_len: [len(p) for p in prefixes],
                 model.image: image_input.reshape([1, -1]).repeat(len(prefixes), axis=0)

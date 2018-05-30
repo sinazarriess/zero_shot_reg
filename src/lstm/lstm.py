@@ -89,7 +89,7 @@ class LSTM():
             logits = tf.reshape(tf.matmul(tf.reshape(softmax_input, [-1, softmax_input_size]), W) + b,
                                 [batch_size, num_steps, self.vocab_size])
             self.predictions = tf.nn.softmax(logits, name = 'prediction')  # [seq, prefix position, token probability]
-            self.last_prediction = self.predictions[:, -1] #todo!!
+            self.last_prediction = self.predictions[:, -1]
 
         self.losses = tf.nn.sparse_softmax_cross_entropy_with_logits(labels = self.seq_target, logits=logits) * token_mask
         self.total_loss = tf.reduce_sum(self.losses)
@@ -108,7 +108,7 @@ class LSTM():
                 self.seq_len: [len(p) for p in prefixes],
                 self.image: image_input.reshape([1, -1]).repeat(len(prefixes), axis=0)
             }))
-            captions.append(caption)
+            captions.append([caption])
 
         for (i, item) in enumerate(raw_dataset['test']['filenames']):
             oids.append(item.split("_")[1])
