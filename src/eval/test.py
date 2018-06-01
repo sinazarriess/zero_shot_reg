@@ -47,6 +47,10 @@ if __name__ == "__main__":
             }))
             captions.append(caption)
         for (i, item) in enumerate(filenames):
+
+            print str(item)
+            print item
+
             oids.append(str(item).split("_")[1])
 
         dict4eval = defaultdict(list)
