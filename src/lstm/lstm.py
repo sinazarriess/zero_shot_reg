@@ -4,6 +4,7 @@ import tensorflow as tf
 import numpy as np
 
 from collections import defaultdict
+from tensorflow.contrib.tensorboard.plugins import projector
 
 class LSTM():
 
@@ -18,8 +19,16 @@ class LSTM():
         print('\n-' * 100)
         print(p.dataset, p.min_token_freq, p.layer_size, self.method, run, '\n')
 
+    def final_prediction(self, tensor):
+        return tensor[:, -1]
+
     def build_network(self):
         tf.reset_default_graph()
+
+        # Create Projector config
+        self.config = projector.ProjectorConfig()
+        # Add embedding visualizer
+        self.ambedding = self.config.embeddings.add()
 
         # Sequence of token indexes generated thus far included start token (or full correct sequence during training).
         self.seq_in = tf.placeholder(tf.int32, shape=[None, None], name='seq_in')  # [seq, token index]
@@ -47,12 +56,12 @@ class LSTM():
             # Encode each generated sequence prefix into a vector.
 
             # Embedding matrix for token vocabulary.           -> xavier: weight initialization!
-            embeddings = tf.get_variable('embeddings', [self.vocab_size, p.layer_size], tf.float32,
+            self.embeddings = tf.get_variable('embeddings', [self.vocab_size, p.layer_size], tf.float32,
                                          tf.contrib.layers.xavier_initializer())  # [vocabulary token, token feature]
 
             # 3tensor of tokens in sequences replaced with their corresponding embedding.
             # look up ids in seq_in in full vocab
-            embedded = tf.nn.embedding_lookup(embeddings, self.seq_in)  # [seq, token, token feature]
+            embedded = tf.nn.embedding_lookup(self.embeddings, self.seq_in)  # [seq, token, token feature]
 
             print ("embedded shape: ", np.shape(embedded))
             # t = tf.expand_dims(post_image, 1)
@@ -89,7 +98,7 @@ class LSTM():
             logits = tf.reshape(tf.matmul(tf.reshape(softmax_input, [-1, softmax_input_size]), W) + b,
                                 [batch_size, num_steps, self.vocab_size])
             self.predictions = tf.nn.softmax(logits, name = 'prediction')  # [seq, prefix position, token probability]
-            self.last_prediction = self.predictions[:, -1]
+            self.last_prediction = tf.py_func(self.final_prediction, [self.predictions], tf.float32 , name = "last-prediction") #self.predictions[:, -1]
 
         self.losses = tf.nn.sparse_softmax_cross_entropy_with_logits(labels = self.seq_target, logits=logits) * token_mask
         self.total_loss = tf.reduce_sum(self.losses)
@@ -97,6 +106,7 @@ class LSTM():
 
         tf.summary.scalar("loss", self.total_loss)
         tf.summary.histogram("histogram loss", self.total_loss)
+
         self.summary_op = tf.summary.merge_all()
 
     def generate_captions(self, raw_dataset, beam, sess):

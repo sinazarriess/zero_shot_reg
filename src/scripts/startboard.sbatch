@@ -11,5 +11,4 @@ source /media/compute/vol/dsg/lilian/anaconda2/bin/activate tf-lilian
 #SBATCH --mail-user=lschroed@techfak.uni-bielefeld.de
 #SBATCH --mail-type=END
 # commands that should be scheduled
-srun tensorboard --logdir="../logs/"
-
+srun tensorboard --logdir="../exp/first/results/inject_refcoco_refrnn_compositional_3_512_1/logs/"
