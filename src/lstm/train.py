@@ -6,15 +6,24 @@ import params as p
 import numpy as np
 import beam
 import json
+from tensorflow.contrib.tensorboard.plugins import projector
+
 
 class Learn:
 
     def run_training(self, model, data):
-
         sess = tf.Session()
         sess.run(tf.global_variables_initializer())
         saver = tf.train.Saver()
-        writer = tf.summary.FileWriter(p.results_data_dir + '/' + model.model_name + '/model/graph')
+
+        if p.use_tensorboard:
+            writer = tf.summary.FileWriter(p.results_data_dir + '/' + model.model_name + '/logs', sess.graph)
+            # Attache the name 'embedding'
+            model.ambedding.tensor_name = model.embeddings.name
+            # Metafile which is described later
+            model.ambedding.metadata_path = './testembed.csv'
+            # Add writer and config to Projector
+            projector.visualize_embeddings(writer, model.config)
 
         num_params = 0
         for v in sess.graph.get_collection('trainable_variables'):
@@ -39,10 +48,9 @@ class Learn:
         for epoch in range(1, p.max_epochs + 1):
             random.shuffle(trainingset_indexes)
 
-            start = timeit.default_timer()
             for i in range(len(trainingset_indexes) // p.minibatch_size):
                 minibatch_indexes = trainingset_indexes[i * p.minibatch_size:(i + 1) * p.minibatch_size]
-                sess.run(model.train_step, feed_dict={
+                sess.run([model.summary_op, model.train_step], feed_dict={
                     model.seq_in: data.train_captions_in[minibatch_indexes],
                     model.seq_len: data.train_captions_len[minibatch_indexes],
                     model.seq_target: data.train_captions_out[minibatch_indexes],
@@ -66,8 +74,6 @@ class Learn:
             saver.save(sess, p.results_data_dir + '/' + model.model_name + '/model')
 
         saver.restore(sess, tf.train.latest_checkpoint(p.results_data_dir + '/' + model.model_name))
-
-
 
         captions = list()
         searcher = beam.Search(data.index_to_token)
@@ -95,7 +101,9 @@ class Learn:
 
 #### new
         dict4eval = model.generate_captions(data.raw_dataset, searcher, sess)
-        with open('/media/compute/vol/dsg/lilian/src/' + '4evalafter2ndrefactoring' + model.model_name + '.json', 'w') as f:
+        with open(p.results_data_dir + '/' + model.model_name + '/4eval' + model.model_name + '.json', 'w') as f:
             json.dump(dict4eval, f)
 
         print('\n wrote new json\n')
+
+        writer.close()
