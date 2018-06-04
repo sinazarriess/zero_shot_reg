@@ -12,3 +12,5 @@ src/eval/jsons/
 src/.ipynb_checkpoints/
 .ipynb_checkpoints/
 *.pyc
+src/eval/cached_data/
+src/eval/model/
