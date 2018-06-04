@@ -48,8 +48,8 @@ if __name__ == "__main__":
             captions.append(caption)
         for (i, item) in enumerate(filenames):
 
-            print str(item)
-            print item
+            print str(item) #nan :/
+            print item#nan :/
 
             oids.append(str(item).split("_")[1])
 
