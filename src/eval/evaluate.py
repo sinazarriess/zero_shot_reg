@@ -7,7 +7,7 @@ import bleu
 
 test_ids = []
 
-candidate_path_1 = 'jsons/4evalrefactoredexpinject_refcoco_refrnn_compositional_3_512_'  # original script output
+candidate_path_1 = 'restoredmodel_captions_' #'jsons/4evalrefactoredexpinject_refcoco_refrnn_compositional_3_512_'  # original script output
 candidate_path_2 = 'jsons/4evalafter2ndrefactoringinject_refcoco_refrnn_compositional_3_512_' # output of oo code
 reference_dict_path = 'jsons/test.json'
 reference_data_path = '../../data/refcoco_refdf.json.gz'

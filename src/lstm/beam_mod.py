@@ -4,12 +4,8 @@ import params
 
 class Search:
 
-    def __init__(self, index_to_token, keep_unknowntoken=False):
+    def __init__(self, index_to_token):
         self.index_to_token = index_to_token
-        self.keep_unknown = keep_unknowntoken
-        if self.keep_unknown:
-            if params.unknown_index not in index_to_token:
-                raise KeyError('unknown token not in dictionary provided')
 
     def generate_sequence_beamsearch(self, predictions_function, beam_width=3, clip_len=20):
         prev_beam = Beam(beam_width)
@@ -33,18 +29,12 @@ class Search:
             #Add next words
             for (prefix_prob, prefix, indexes_distribution) in zip(prob_batch, prefix_batch, indexes_distributions):
                 for (next_index, next_prob) in enumerate(indexes_distribution):
-                    if self.keep_unknown:
-                        if next_index == params.edge_index:  # if next word is the end token then mark prefix as complete and leave out the end token
-                            curr_beam.add(prefix_prob * next_prob, True, prefix)
-                        else:  # if next word is a non-end token then mark prefix as incomplete
-                            curr_beam.add(prefix_prob * next_prob, False, prefix + [next_index])
-                    else:
-                        if next_index == params.unknown_index: #skip unknown tokens
-                            pass
-                        elif next_index == params.edge_index: #if next word is the end token then mark prefix as complete and leave out the end token
-                            curr_beam.add(prefix_prob*next_prob, True, prefix)
-                        else: #if next word is a non-end token then mark prefix as incomplete
-                            curr_beam.add(prefix_prob*next_prob, False, prefix+[next_index])
+                    if next_index == params.unknown_index: #skip unknown tokens
+                        pass
+                    elif next_index == params.edge_index: #if next word is the end token then mark prefix as complete and leave out the end token
+                        curr_beam.add(prefix_prob*next_prob, True, prefix)
+                    else: #if next word is a non-end token then mark prefix as incomplete
+                        curr_beam.add(prefix_prob*next_prob, False, prefix+[next_index])
 
             (best_prob, best_complete, best_prefix) = max(curr_beam)
             if best_complete == True or len(best_prefix)-1 == clip_len: #if the length of the most probable prefix exceeds the clip length (ignoring the start token) then return it as is

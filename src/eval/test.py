@@ -11,13 +11,16 @@ def final_prediction(self, tensor):
 
 if __name__ == "__main__":
 
-    filenames = np.genfromtxt('/mnt/Data/zero_shot_reg/src/eval/cached_data/raw_dataset_filenames.txt', delimiter=',')
+    filenames = np.genfromtxt('../eval/cached_data/raw_dataset_filenames.txt', delimiter=',', dtype=None, encoding=None)
 
-    with open('/mnt/Data/zero_shot_reg/src/eval/cached_data/index2token.json', "r") as f:
+    with open('../eval/cached_data/index2token.json', "r") as f:
         index2token = json.load(f)
     new_index2token= {int(key): value for key, value in index2token.iteritems()}
 
-    images = np.genfromtxt('/mnt/Data/zero_shot_reg/src/eval/cached_data/raw_dataset.txt', delimiter=',', dtype=None)
+    # keep unknown tokens
+    new_index2token[1] = "UNKNOWN"
+
+    images = np.genfromtxt('../eval/cached_data/raw_dataset.txt', delimiter=',', dtype=None)
 
     imported_meta = tf.train.import_meta_graph('../eval/model/inject_refcoco_refrnn_compositional_3_512_1/model.meta')
     graph = tf.get_default_graph()
@@ -25,11 +28,6 @@ if __name__ == "__main__":
     seq_len = graph.get_tensor_by_name('seq_len:0')
     image = graph.get_tensor_by_name('image:0')
     predictions = graph.get_tensor_by_name('softmax/prediction:0')
-   # last_prediction = graph.get_operation_by_name('softmax/last-prediction')
-
-    # py_funcs get lost in serialization and have to be redefined
-   # last_prediction = tf.py_func(final_prediction, [predictions], tf.float32,
-                                  #    name="last-prediction")  # self.predictions[:, -1]
     last_prediction = predictions[:, -1]
 
     with tf.Session() as sess:
@@ -38,7 +36,7 @@ if __name__ == "__main__":
 
         oids = list()
         captions = list()
-        searcher = lstm.beam.Search(new_index2token)
+        searcher = lstm.beam.Search(new_index2token, True)
         for (i, image_input) in enumerate(images):
             caption = searcher.generate_sequence_beamsearch(lambda prefixes: sess.run(last_prediction, feed_dict={
                 seq_in: prefixes,
@@ -47,16 +45,12 @@ if __name__ == "__main__":
             }))
             captions.append(caption)
         for (i, item) in enumerate(filenames):
-
-            print str(item) #nan :/
-            print item#nan :/
-
             oids.append(str(item).split("_")[1])
 
         dict4eval = defaultdict(list)
         for (idx, pair) in enumerate(zip(oids, captions)):
-            dict4eval[pair[0]] = pair[1]
+            dict4eval[pair[0]] = [pair[1]]
 
-        with open('restoredmodel_captions.json', 'w') as f:
+        with open('../eval/jsons/restoredmodel_captions.json', 'w') as f:
             json.dump(dict4eval, f)
 

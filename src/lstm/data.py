@@ -7,21 +7,28 @@ import params as p
 
 class Data:
 
-    def __init__(self):  #todo soll das so bleiben?
+    def __init__(self, imgfeatpath="../data/refcoco/mscoco_vgg19_refcoco.npz",
+                 refspath="../data/refcoco/refcoco_refdf.json.gz", splitpath="../data/refcoco/refcoco_splits.json"):  #todo soll das so bleiben?
+
+        self.imgfeatures_path = imgfeatpath
+        self.refs_path = refspath
+        self.split_path = splitpath
+
         self.load_data()
         self.prepare_data()
         self.clean_vocab()
         self.prepare_training()
 
+
     def load_data(self):
         ############ load and prepare image features ###########################
 
         # Image Features  --> numpy npz file includes one key/array, arr_0
-        self.extracted_features = np.load("../data/refcoco/mscoco_vgg19_refcoco.npz")['arr_0']
+        self.extracted_features = np.load(self.imgfeatures_path)['arr_0']
 
         ########### load and prepare referring expressions dataset ##############
-        refcoco_data = pd.read_json("../data/refcoco/refcoco_refdf.json.gz", orient="split", compression="gzip")
-        with open("../data/refcoco/refcoco_splits.json") as f:
+        refcoco_data = pd.read_json(self.refs_path, orient="split", compression="gzip")
+        with open(self.split_path) as f:
             splits = json.load(f)
         splitmap = {'val': 'val', 'train': 'train', 'testA': 'test', 'testB': 'test'}
         # for every group in split --> for every entry --> make entry in new dict
@@ -104,13 +111,15 @@ class Data:
         ################################################################
         # for min_token_freq in [ 3, 4, 5 ]:
         all_tokens = (token for caption_group in self.raw_dataset['train']['captions'] for caption in caption_group for token
-                      in
-                      caption)
+                      in caption)
+
         token_freqs = collections.Counter(all_tokens)
         self.vocab = sorted(token_freqs.keys(), key=lambda token: (-token_freqs[token], token))
+        print "all tokens count: ", len(self.vocab)
         # discard words with very low frequency
         while token_freqs[self.vocab[-1]] < p.min_token_freq:
-            self.vocab.pop()
+            print token_freqs[self.vocab[-1]]
+            print(self.vocab.pop())
 
         self.vocab_size = len(self.vocab) + 2  # + edge and unknown tokens
         print('vocab:', self.vocab_size)
@@ -122,6 +131,11 @@ class Data:
         for (caption_group, img) in zip(data['captions'], data['images']):
             for caption in caption_group:
                 indexes_ = [self.token_to_index.get(token, self.unknown_index) for token in caption]
+
+          #      for token in caption:
+          #          if token not in self.token_to_index.keys():
+          #              print token
+
                 indexes.append(indexes_)
                 lens.append(len(indexes_) + 1)  # add 1 due to edge token
                 images.append(img)
@@ -149,3 +163,5 @@ class Data:
 
 
 
+if __name__ == "__main__":
+    data = Data()
