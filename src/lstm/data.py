@@ -8,7 +8,7 @@ import params as p
 class Data:
 
     def __init__(self, imgfeatpath="../data/refcoco/mscoco_vgg19_refcoco.npz",
-                 refspath="../data/refcoco/refcoco_refdf.json.gz", splitpath="../data/refcoco/refcoco_splits.json"):  #todo soll das so bleiben?
+                 refspath="../data/refcoco/refcoco_refdf.json.gz", splitpath="../data/refcoco/refcoco_splits.json"):
 
         self.imgfeatures_path = imgfeatpath
         self.refs_path = refspath
@@ -153,6 +153,10 @@ class Data:
     def prepare_training(self):
         self.token_to_index = {token: i + 2 for (i, token) in enumerate(self.vocab)}
         self.index_to_token = {i + 2: token for (i, token) in enumerate(self.vocab)}
+
+        # keep unknown tokens
+        self.index_to_token[1] = "UNKNOWN"
+
         self.edge_index = 0
         self.unknown_index = 1
 

@@ -76,7 +76,7 @@ class Learn:
         saver.restore(sess, tf.train.latest_checkpoint(p.results_data_dir + '/' + model.model_name))
 
         captions = list()
-        searcher = beam.Search(data.index_to_token)
+        searcher = beam.Search(data.index_to_token, True)
         for (i, image_input) in enumerate(data.raw_dataset['test']['images']):
             caption = searcher.generate_sequence_beamsearch(lambda prefixes: sess.run(model.last_prediction, feed_dict={
                 model.seq_in: prefixes,
