@@ -115,6 +115,10 @@ class Data:
 
         token_freqs = collections.Counter(all_tokens)
         self.vocab = sorted(token_freqs.keys(), key=lambda token: (-token_freqs[token], token))
+
+        with open(p.results_data_dir + '/token_freqs.json', 'w') as f:
+            json.dump(token_freqs , f)
+
         print "all tokens count: ", len(self.vocab)
         # discard words with very low frequency
         while token_freqs[self.vocab[-1]] < p.min_token_freq:

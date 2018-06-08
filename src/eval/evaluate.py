@@ -14,9 +14,6 @@ reference_data_path = '../../data/refcoco_refdf.json.gz'
 
 class Evalutator:
     def __init__(self):
-
-
-
         if os.path.exists(reference_dict_path):
             with open(reference_dict_path, "r") as f:
                 self.refdict4eval = json.load(f)  # correct format
@@ -76,16 +73,17 @@ class Evalutator:
 if __name__ == '__main__':
     eval = Evalutator()
 
+    eval.run_eval('./jsons/no_unknown_for_comp.json')
     score_1 = 0
     score_2 = 0
 
-    for i in range(1,4):
-        print "evaluate " + candidate_path_1 + str(i) + '.json'
-        score_1 += eval.run_eval(candidate_path_1 + str(i) + '.json')['Bleu_1']
+#    for i in range(1,4):
+ #       print "evaluate " + candidate_path_1 + str(i) + '.json'
+ #       score_1 += eval.run_eval(candidate_path_1 + str(i) + '.json')['Bleu_1']
 
-    for i in range(1, 4):
-        print "evaluate " + candidate_path_2 + str(i) + '.json'
-        score_2 += eval.run_eval(candidate_path_2 + str(i) + '.json')['Bleu_1']
+ #   for i in range(1, 4):
+ #       print "evaluate " + candidate_path_2 + str(i) + '.json'
+ #       score_2 += eval.run_eval(candidate_path_2 + str(i) + '.json')['Bleu_1']
 
-    print "Final average BLEU_1 score Candidate 1: " + str(score_1 / 3.0)
-    print "Final average BLEU_1 score Candidate 2: " + str(score_2 / 3.0)
+ #   print "Final average BLEU_1 score Candidate 1: " + str(score_1 / 3.0)
+ #   print "Final average BLEU_1 score Candidate 2: " + str(score_2 / 3.0)
