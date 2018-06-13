@@ -7,6 +7,9 @@ from pprint import pprint
 import csv
 import statistics
 
+modelpath = 'model/with_reduced_vocab/'
+
+
 class Analyse:
 
     def __init__(self):
@@ -17,13 +20,13 @@ class Analyse:
 
     def read_files(self):
 
-        with open('./jsons/test_old.json', "r") as f: # TODO Achtung - enthaelt nicht alle keys. andere Quelle verwenden?
+        with open(modelpath + 'test.json', "r") as f: # TODO Achtung
             self.reference = json.load(f)
 
         with open('./model/without_unknown/inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') as f:
             self.without_unknown_candidate = json.load(f)
 
-        with open('./model/inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') as f:
+        with open(modelpath + 'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') as f:
             self.unknown_candidate = json.load(f)
 
         reader = csv.reader(open("./cats.txt"))
@@ -44,7 +47,7 @@ class Analyse:
             if "UNKNOWN" in self.unknown_candidate[refex_id]:
                 unknown_counter += 1
                 comparison['reflist'] = self.reference[refex_id]
-                comparison['original generated caption'] = self.without_unknown_candidate[refex_id]
+               # comparison['original generated caption'] = self.without_unknown_candidate[refex_id]
                 comparison['with unknown'] = self.unknown_candidate[refex_id]
                 self.analysis_dict[refex_id] = comparison
 
@@ -75,8 +78,8 @@ class Analyse:
             json.dump(self.analysis_dict, f)
 
         dict4eval = defaultdict()
-        for reg_id in self.analysis_dict.keys():
-            dict4eval[reg_id] = self.analysis_dict[reg_id]['original generated caption']
+#        for reg_id in self.analysis_dict.keys():
+#            dict4eval[reg_id] = self.analysis_dict[reg_id]['original generated caption']
         with open('./jsons/unknown_analysis_eval_original.json', 'w') as f:
             json.dump(dict4eval, f)
 
@@ -158,8 +161,8 @@ class Analyse:
 
 if __name__ == "__main__":
     a = Analyse()
-   # a.analyse()
-  #  a.visualize_unknown()
+    a.analyse()
+    a.visualize_unknown()
  #   a.visualize_unknown("161838")
     #1631127   25331  1957436
     a.analyze_freqs()

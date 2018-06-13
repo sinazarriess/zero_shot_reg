@@ -4,6 +4,7 @@ import os
 from collections import defaultdict
 import numpy as np
 import bleu
+import ast
 
 test_ids = []
 
@@ -14,7 +15,7 @@ reference_data_path = '../../data/refcoco_refdf.json.gz'
 
 class Evalutator:
     def __init__(self, model_path):
-
+        self.model_path = model_path
         self.reference_dict_path = model_path + 'test.json'
         print  os.path.exists(self.reference_dict_path)
         if os.path.exists(self.reference_dict_path):
@@ -43,6 +44,10 @@ class Evalutator:
         return bleu.evaluate(self.reference_dict_path, candidate, True)
 
     def prepare_ref_data(self):
+        with open(self.model_path + 'refs_moved_to_test.json', 'r') as f:
+            ids = f.readline()
+            extra_items_list = ast.literal_eval(ids)
+
         refcoco_data = pd.read_json(reference_data_path, orient="split", compression="gzip")
         with open("../../data/refcoco_splits.json") as f:
             splits = json.load(f)
@@ -65,7 +70,7 @@ class Evalutator:
         for obj2phrases_item in self.obj2phrases:  # tqdm(obj2phrases):
             split = self.obj2split[obj2phrases_item]
 
-            if split == 'test':  # or region id has been put to test split!! todo --> implement me
+            if split == 'test' or str(obj2phrases_item) in extra_items_list:
                 test_ids.append(obj2phrases_item)
                 caption_group = []
                 for ref in self.obj2phrases[obj2phrases_item]:
