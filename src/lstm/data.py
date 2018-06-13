@@ -7,17 +7,25 @@ import params as p
 
 class Data:
 
-    def __init__(self, imgfeatpath="../data/refcoco/mscoco_vgg19_refcoco.npz",
+    def __init__(self, words_excluded= [],imgfeatpath="../data/refcoco/mscoco_vgg19_refcoco.npz",
                  refspath="../data/refcoco/refcoco_refdf.json.gz", splitpath="../data/refcoco/refcoco_splits.json"):
 
         self.imgfeatures_path = imgfeatpath
         self.refs_path = refspath
         self.split_path = splitpath
+        self.discarded_words = []
+        self.excluded_words = words_excluded
+        self.refs_moved_to_test = [] # ids of all those words ignored and put into test set
 
         self.load_data()
         self.prepare_data()
         self.clean_vocab()
         self.prepare_training()
+
+        with open(p.results_data_dir + '/words_too_rare.json', 'w') as f:
+            json.dump(self.discarded_words, f)
+        with open(p.results_data_dir + '/refs_moved_to_test.json', 'w') as f:
+            json.dump(self.refs_moved_to_test, f)
 
 
     def load_data(self):
@@ -74,6 +82,8 @@ class Data:
                 features_for_imageId[:, 2] == obj2phrases_item[1]]  # obj2phrases_item[1] is region id
 
             if len(features_for_objectId) > 0:
+
+                isIgnored = []
                 image = np.array(features_for_objectId[0])[3:]  # due to data structure -> indices
                 test_list.append(np.array(features_for_objectId[0])[3:])
                 test_count += 1
@@ -84,11 +94,22 @@ class Data:
                 for ref in self.obj2phrases[obj2phrases_item]:
                     caption_group.append(ref)
 
+                    for word in self.excluded_words:
+                        if word in ref:
+                            isIgnored = True
+
                 image = image / np.linalg.norm(image)
 
-                self.raw_dataset[split]['filenames'].append(filename)
-                self.raw_dataset[split]['images'].append(image)
-                self.raw_dataset[split]['captions'].append(caption_group)
+                if not isIgnored:
+                    self.raw_dataset[split]['filenames'].append(filename)
+                    self.raw_dataset[split]['images'].append(image)
+                    self.raw_dataset[split]['captions'].append(caption_group)
+                else:
+                    self.raw_dataset['test']['filenames'].append(filename)
+                    self.raw_dataset['test']['images'].append(image)
+                    self.raw_dataset['test']['captions'].append(caption_group)
+                    self.refs_moved_to_test.append(str(obj2phrases_item[1]))
+                    print filename
 
         print 'raw data set', len(self.raw_dataset['train']['captions'])  # 42279
 
@@ -123,7 +144,7 @@ class Data:
         # discard words with very low frequency
         while token_freqs[self.vocab[-1]] < p.min_token_freq:
             print token_freqs[self.vocab[-1]]
-            print(self.vocab.pop())
+            self.discarded_words.append(self.vocab.pop())
 
         self.vocab_size = len(self.vocab) + 2  # + edge and unknown tokens
         print('vocab:', self.vocab_size)

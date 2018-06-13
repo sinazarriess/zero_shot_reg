@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     images = np.genfromtxt('../eval/cached_data/raw_dataset.txt', delimiter=',', dtype=None)
 
-    imported_meta = tf.train.import_meta_graph('../eval/model/inject_refcoco_refrnn_compositional_3_512_1/model.meta')
+    imported_meta = tf.train.import_meta_graph('../eval/model/without_chicken/inject_refcoco_refrnn_compositional_3_512_1/model.meta')
     graph = tf.get_default_graph()
     seq_in = graph.get_tensor_by_name('seq_in:0')
     seq_len = graph.get_tensor_by_name('seq_len:0')
@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     with tf.Session() as sess:
 
-        imported_meta.restore(sess, tf.train.latest_checkpoint('../eval/model/inject_refcoco_refrnn_compositional_3_512_1'))
+        imported_meta.restore(sess, tf.train.latest_checkpoint('../eval/model/without_chicken/inject_refcoco_refrnn_compositional_3_512_1'))
 
         oids = list()
         captions = list()
@@ -51,6 +51,6 @@ if __name__ == "__main__":
         for (idx, pair) in enumerate(zip(oids, captions)):
             dict4eval[pair[0]] = [pair[1]]
 
-        with open('../eval/jsons/restoredmodel_captions.json', 'w') as f:
+        with open('../eval/jsons/restoredmodel_captions_chicken.json', 'w') as f:
             json.dump(dict4eval, f)
 

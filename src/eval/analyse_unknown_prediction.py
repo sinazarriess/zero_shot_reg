@@ -152,14 +152,14 @@ class Analyse:
         print "mean frequency of in-vocab words : ", mean_freq
         print "median :", statistics.median(sorted(freqs))
         for key in alltokens.keys():
-            if alltokens[key] == 50:
-                print key
+            if alltokens[key] in range(40,50):
+                print key, alltokens[key]
 
 
 if __name__ == "__main__":
     a = Analyse()
- #   a.analyse()
- #   a.visualize_unknown()
+   # a.analyse()
+  #  a.visualize_unknown()
  #   a.visualize_unknown("161838")
     #1631127   25331  1957436
     a.analyze_freqs()

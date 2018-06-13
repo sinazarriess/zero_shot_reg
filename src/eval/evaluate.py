@@ -9,13 +9,16 @@ test_ids = []
 
 candidate_path_1 = 'restoredmodel_captions_' #'jsons/4evalrefactoredexpinject_refcoco_refrnn_compositional_3_512_'  # original script output
 candidate_path_2 = 'jsons/4evalafter2ndrefactoringinject_refcoco_refrnn_compositional_3_512_' # output of oo code
-reference_dict_path = 'jsons/test.json'
+#reference_dict_path = 'jsons/test.json'
 reference_data_path = '../../data/refcoco_refdf.json.gz'
 
 class Evalutator:
-    def __init__(self):
-        if os.path.exists(reference_dict_path):
-            with open(reference_dict_path, "r") as f:
+    def __init__(self, model_path):
+
+        self.reference_dict_path = model_path + 'test.json'
+        print  os.path.exists(self.reference_dict_path)
+        if os.path.exists(self.reference_dict_path):
+            with open(self.reference_dict_path, "r") as f:
                 self.refdict4eval = json.load(f)  # correct format
 
         else:
@@ -34,10 +37,10 @@ class Evalutator:
 
         assert len(self.refdict4eval.keys()) == len(cand.keys())
 
-        with open(reference_dict_path, 'w') as f:
+        with open(self.reference_dict_path, 'w') as f:
             json.dump(self.refdict4eval, f)
 
-        return bleu.evaluate(reference_dict_path, candidate, True)
+        return bleu.evaluate(self.reference_dict_path, candidate, True)
 
     def prepare_ref_data(self):
         refcoco_data = pd.read_json(reference_data_path, orient="split", compression="gzip")
@@ -62,7 +65,7 @@ class Evalutator:
         for obj2phrases_item in self.obj2phrases:  # tqdm(obj2phrases):
             split = self.obj2split[obj2phrases_item]
 
-            if split == 'test':
+            if split == 'test':  # or region id has been put to test split!! todo --> implement me
                 test_ids.append(obj2phrases_item)
                 caption_group = []
                 for ref in self.obj2phrases[obj2phrases_item]:
@@ -71,9 +74,11 @@ class Evalutator:
 
 
 if __name__ == '__main__':
-    eval = Evalutator()
 
-    eval.run_eval('./jsons/no_unknown_for_comp.json')
+    #eval.run_eval('./jsons/no_unknown_for_comp.json')
+    model_path = 'model/with_reduced_vocab/'
+    eval = Evalutator(model_path)
+    eval.run_eval(model_path + 'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json')
     score_1 = 0
     score_2 = 0
 
