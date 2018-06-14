@@ -116,7 +116,7 @@ class LSTM():
             caption = beam.generate_sequence_beamsearch(lambda prefixes: sess.run(self.last_prediction, feed_dict={
                 self.seq_in: prefixes,
                 self.seq_len: [len(p) for p in prefixes],
-                self.image: image_input.reshape([1, -1]).repeat(len(prefixes), axis=0)
+                self.image: image_input.reshape([1, -1]).repeat(len(prefixes), axis=0)  # -1 means unspecified dimension
             }))
             captions.append([caption])
 

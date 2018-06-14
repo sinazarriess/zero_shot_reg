@@ -19,7 +19,7 @@ def generate_indextotoken(data):
 
 if __name__ == '__main__':
 
-    words_excluded = ["juice", "toy", "kitty", "circle", "soldier"]
+    words_excluded = ["juice", "soldier", "cookie", "watch", "lemon", "suv"]
     data_interface = data.Data(words_excluded)
     print data_interface.vocab_size           #  should be 2967
     training = train.Learn()

@@ -17,7 +17,7 @@ class Evalutator:
     def __init__(self, model_path):
         self.model_path = model_path
         self.reference_dict_path = model_path + 'test.json'
-        print  os.path.exists(self.reference_dict_path)
+        print  "Reference dict (test.json) exists: ", os.path.exists(self.reference_dict_path)
         if os.path.exists(self.reference_dict_path):
             with open(self.reference_dict_path, "r") as f:
                 self.refdict4eval = json.load(f)  # correct format
