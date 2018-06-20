@@ -51,20 +51,36 @@ if __name__ == "__main__":
       #      captions.append(caption)
 
         for (i, image_input) in enumerate(images):
-            predictions_function = (lambda prefix: sess.run(last_prediction, feed_dict={
-                seq_in: [prefix],
-                seq_len: [len(prefix)],
-                image: image_input.reshape([1, -1]).repeat(1, axis=0)
+            predictions_function = (lambda prefixes: sess.run(last_prediction, feed_dict={
+                seq_in: prefixes,
+                seq_len: [len(p) for p in prefixes],
+                image: image_input.reshape([1, -1]).repeat(len(prefixes), axis=0)
             }))
             gen_prefix = list()
-            isComplete = False
-            #while not isComplete:
-            indexes_distributions = predictions_function(gen_prefix)
+            gen_prefix.append([0]) #edge index
 
-         #   for (next_index, next_prob) in enumerate(indexes_distribution):
-            #if next_word == edge_index:
-            #    isComplete = True
-            print gen_prefix
+            while True:
+                isComplete = False
+                #while not isComplete:
+                indexes_distributions = predictions_function(gen_prefix)
+
+             #   for (next_index, next_prob) in enumerate(indexes_distribution):
+                #if next_word == edge_index:
+                #    isComplete = True
+                #print indexes_distributions
+
+                for indexes_distribution in indexes_distributions:
+                    for (next_index, next_prob) in enumerate(indexes_distribution):
+
+                        if next_index == edge_index:  # if next word is the end token then mark prefix as complete and leave out the end token
+                            isComplete = True
+                             # if next word is a non-end token then mark prefix as incomplete
+                            captions_greedy.append(' '.join(new_index2token[index] for index in gen_prefix[1:]))
+                            #print ' '.join(new_index2token[index] for index in gen_prefix[1:])
+                            break
+                        else:
+                            gen_prefix[0].append(next_index)
+
 
         for (i, item) in enumerate(filenames):
             oids.append(str(item).split("_")[1])
