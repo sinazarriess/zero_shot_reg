@@ -51,6 +51,7 @@ if __name__ == "__main__":
       #      captions.append(caption)
 
         for (i, image_input) in enumerate(images):
+        #image_input = images[0]
             predictions_function = (lambda prefixes: sess.run(last_prediction, feed_dict={
                 seq_in: prefixes,
                 seq_len: [len(p) for p in prefixes],
@@ -58,35 +59,44 @@ if __name__ == "__main__":
             }))
             gen_prefix = list()
             gen_prefix.append([0]) #edge index
+            isComplete = False
+            while not isComplete:
 
-            while True:
-                isComplete = False
                 #while not isComplete:
                 indexes_distributions = predictions_function(gen_prefix)
 
              #   for (next_index, next_prob) in enumerate(indexes_distribution):
                 #if next_word == edge_index:
                 #    isComplete = True
-                #print indexes_distributions
+                # print type(indexes_distributions)
+                # print len(indexes_distributions)
+                # print len(indexes_distributions[0])
+                # print indexes_distributions[0]
+                candidate_dict = defaultdict()
 
-                for indexes_distribution in indexes_distributions:
-                    for (next_index, next_prob) in enumerate(indexes_distribution):
+                max_value = 0
+                max_index = -1
+                for (next_index, next_prob) in enumerate(indexes_distributions[0]):
+                    candidate_dict[next_index] = next_prob
+                    if next_prob > max_value:
+                        max_value = next_prob
+                        max_index = next_index
 
-                        if next_index == edge_index:  # if next word is the end token then mark prefix as complete and leave out the end token
-                            isComplete = True
-                             # if next word is a non-end token then mark prefix as incomplete
-                            captions_greedy.append(' '.join(new_index2token[index] for index in gen_prefix[1:]))
-                            #print ' '.join(new_index2token[index] for index in gen_prefix[1:])
-                            break
-                        else:
-                            gen_prefix[0].append(next_index)
+                #best_candidates = sorted(indexes_distributions)[:5]
+
+                if max_index == edge_index:
+                    isComplete = True
+                    captions_greedy.append(' '.join(new_index2token[index] for index in gen_prefix[0][1:]))
+                else:
+                    gen_prefix[0].append(max_index)
+               # print gen_prefix[0]
 
 
         for (i, item) in enumerate(filenames):
             oids.append(str(item).split("_")[1])
 
         dict4eval = defaultdict(list)
-        for (idx, pair) in enumerate(zip(oids, captions)):
+        for (idx, pair) in enumerate(zip(oids, captions_greedy)): #captions
             dict4eval[pair[0]] = [pair[1]]
 
         with open(model_dir + 'restoredmodel_captions_with_unknown.json', 'w') as f:
