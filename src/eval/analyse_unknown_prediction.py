@@ -7,8 +7,10 @@ from pprint import pprint
 import csv
 import statistics
 import utils
+import ast
 
 modelpath = 'model/with_reduced_vocab/'
+file2analyse = 'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json' #'restoredmodel_refs_greedy.json'
 
 
 class Analyse:
@@ -18,6 +20,9 @@ class Analyse:
         self.categories = defaultdict()
         self.images = set()
         self.regionids = list()
+        with open(modelpath + 'refs_moved_to_test.json', 'r') as f:
+            ids = f.readline()
+            self.extra_items_list = ast.literal_eval(ids)
 
     def read_files(self):
 
@@ -27,7 +32,13 @@ class Analyse:
         with open('./model/without_unknown/inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') as f:
             self.without_unknown_candidate = json.load(f)
 
-        with open(modelpath + 'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') as f:
+        try:
+            with open(modelpath + 'highest_prob_candidates.json', 'r') as f:
+                self.candidate_words = json.load(f)
+        except IOError:
+            "no candidate words"
+
+        with open(modelpath + file2analyse) as f:
             self.unknown_candidate = json.load(f)
 
         self.categories = utils.read_in_cats()
@@ -41,12 +52,13 @@ class Analyse:
         unknown_counter = 0
         for refex_id in self.unknown_candidate:
             comparison = defaultdict()
-            if "UNKNOWN" in self.unknown_candidate[refex_id]:
-                unknown_counter += 1
-                comparison['reflist'] = self.reference[refex_id]
-               # comparison['original generated caption'] = self.without_unknown_candidate[refex_id]
-                comparison['with unknown'] = self.unknown_candidate[refex_id]
-                self.analysis_dict[refex_id] = comparison
+            for word in self.unknown_candidate[refex_id]:
+                if "UNKNOWN" in word:
+                    unknown_counter += 1
+                    comparison['reflist'] = self.reference[refex_id]
+#                    comparison['original generated caption'] = self.without_unknown_candidate[refex_id] #TODO
+                    comparison['with unknown'] = self.unknown_candidate[refex_id]
+                    self.analysis_dict[refex_id] = comparison
 
         print "Number of unknown occurences: ", unknown_counter
 
@@ -72,20 +84,20 @@ class Analyse:
         print self.images
 
     def save(self):
-        with open('./jsons/unknown_analysis.json', 'w') as f:
+        with open(modelpath + 'unknown_analysis.json', 'w') as f:
             json.dump(self.analysis_dict, f)
 
         dict4eval = defaultdict()
 #        for reg_id in self.analysis_dict.keys():
 #            dict4eval[reg_id] = self.analysis_dict[reg_id]['original generated caption']
-        with open('./jsons/unknown_analysis_eval_original.json', 'w') as f:
+        with open(modelpath + 'unknown_analysis_eval_original.json', 'w') as f:
             json.dump(dict4eval, f)
 
         dict4comparison = defaultdict()
         for reg_id in self.without_unknown_candidate.keys():
             if reg_id not in self.analysis_dict.keys():
                 dict4comparison[reg_id] = self.without_unknown_candidate[reg_id]
-        with open('./jsons/no_unknown_for_comp.json', 'w') as f:
+        with open(modelpath + 'no_unknown_for_comp.json', 'w') as f:
             json.dump(dict4comparison, f)
 
         # sanity check
@@ -100,7 +112,7 @@ class Analyse:
         self.save()
 
     def visualize_unknown(self, region_id=-1):
-        with open('./jsons/unknown_analysis.json', 'r') as f:
+        with open(modelpath + 'unknown_analysis.json', 'r') as f:
             data = json.load(f)
 
         if region_id >= 0:
@@ -117,6 +129,11 @@ class Analyse:
             c = cv.waitKey(0);
             return
         else:
+            average_length = 0
+            for reg_id in data:
+                print data[reg_id]['with unknown']
+                average_length += len(data[reg_id]['with unknown'])
+            print "average utterance length (with unknown): ", average_length / len(data)
             for reg_id in data:
                 img_id = data[reg_id]['image_id']
                 filename = "/mnt/Data/zero_shot_reg/coco-caption/images/train2014/COCO_train2014_" + str(img_id).zfill(
@@ -128,14 +145,16 @@ class Analyse:
                 print "\n\n\n"
                 print "region_id : ", reg_id
                 print "category : ", self.categories[str(data[reg_id]['cat'])]
+             #   print "alternative candidates : ", self.candidate_words[reg_id] #TODO
                 pprint(data[reg_id])
                 cv.imshow('test', img)
                 c = cv.waitKey(0);
                 if c == ord('q'):
                     return
 
+
     def analyze_freqs(self):
-        with open('resultstoken_freqs.json') as f:
+        with open(modelpath + 'resultstoken_freqs.json') as f:
             alltokens = json.load(f)
         mean_freq = 0
         counter = 0
@@ -148,8 +167,7 @@ class Analyse:
 
         mean_freq = mean_freq / float(counter)
 
-        print "control count - in-vocab word number : "
-        counter  # 2965, vocab without edge and unknown
+        print "control count - in-vocab word number : ", counter  # 2965, vocab without edge and unknown
         print "mean frequency of in-vocab words : ", mean_freq
         print "median :", statistics.median(sorted(freqs))
         for key in alltokens.keys():
@@ -159,8 +177,14 @@ class Analyse:
 
 if __name__ == "__main__":
     a = Analyse()
- #   a.analyse()
- #   a.visualize_unknown()
+    a.analyse()
+
+    for reg_id in a.extra_items_list:
+
+        #print a.without_unknown_candidate[reg_id]
+        print a.reference[reg_id]
+
+  #  a.visualize_unknown()
  #   a.visualize_unknown("161838")
     #1631127   25331  1957436
-    a.analyze_freqs()
+   # a.analyze_freqs()

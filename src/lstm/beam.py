@@ -5,11 +5,16 @@ import params
 class Search:
 
     def __init__(self, index_to_token, keep_unknowntoken=False):
+        self.average_utt_len = 0
+        self.utt_count = 0
         self.index_to_token = index_to_token
         self.keep_unknown = keep_unknowntoken
         if self.keep_unknown:
             if params.unknown_index not in index_to_token:
                 raise KeyError('unknown token not in dictionary provided')
+
+    def get_average_ref_len(self):
+        return self.average_utt_len/float(self.utt_count)
 
     def generate_sequence_beamsearch(self, predictions_function, beam_width=3, clip_len=20):
         prev_beam = Beam(beam_width)
@@ -48,6 +53,8 @@ class Search:
 
             (best_prob, best_complete, best_prefix) = max(curr_beam)
             if best_complete == True or len(best_prefix)-1 == clip_len: #if the length of the most probable prefix exceeds the clip length (ignoring the start token) then return it as is
+                self.average_utt_len += len(best_prefix[1:])
+                self.utt_count += 1
                 return ' '.join(self.index_to_token[index] for index in best_prefix[1:]) #return best sentence without the start token
 
             prev_beam = curr_beam
