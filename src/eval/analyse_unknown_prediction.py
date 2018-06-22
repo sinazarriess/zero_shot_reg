@@ -9,8 +9,8 @@ import statistics
 import utils
 import ast
 
-modelpath = 'model/with_reduced_vocab/'
-file2analyse = 'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json' #'restoredmodel_refs_greedy.json'
+modelpath = 'model/with_unknown/'
+file2analyse = 'restoredmodel_refs_greedy.json' #'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json'
 
 
 class Analyse:
@@ -20,12 +20,8 @@ class Analyse:
         self.categories = defaultdict()
         self.images = set()
         self.regionids = list()
-        with open(modelpath + 'refs_moved_to_test.json', 'r') as f:
-            ids = f.readline()
-            self.extra_items_list = ast.literal_eval(ids)
 
     def read_files(self):
-
         with open(modelpath + 'test.json', "r") as f: # TODO Achtung
             self.reference = json.load(f)
 
@@ -36,7 +32,7 @@ class Analyse:
             with open(modelpath + 'highest_prob_candidates.json', 'r') as f:
                 self.candidate_words = json.load(f)
         except IOError:
-            "no candidate words"
+            print "no candidate words"
 
         with open(modelpath + file2analyse) as f:
             self.unknown_candidate = json.load(f)
@@ -154,7 +150,7 @@ class Analyse:
 
 
     def analyze_freqs(self):
-        with open(modelpath + 'resultstoken_freqs.json') as f:
+        with open('resultstoken_freqs.json') as f: #TODO generisch?
             alltokens = json.load(f)
         mean_freq = 0
         counter = 0
@@ -178,13 +174,5 @@ class Analyse:
 if __name__ == "__main__":
     a = Analyse()
     a.analyse()
-
-    for reg_id in a.extra_items_list:
-
-        #print a.without_unknown_candidate[reg_id]
-        print a.reference[reg_id]
-
-  #  a.visualize_unknown()
- #   a.visualize_unknown("161838")
-    #1631127   25331  1957436
+    a.visualize_unknown()
    # a.analyze_freqs()

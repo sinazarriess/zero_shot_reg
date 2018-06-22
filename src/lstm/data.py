@@ -4,6 +4,7 @@ import collections
 import pandas as pd
 import json
 import params as p
+import ast
 
 class Data:
 
@@ -26,6 +27,10 @@ class Data:
             json.dump(self.discarded_words, f)
         with open(p.results_data_dir + '/refs_moved_to_test.json', 'w') as f:
             json.dump(self.refs_moved_to_test, f)
+
+        with open('../eval/model/with_reduced_vocab/refs_moved_to_test.json', 'r') as f:
+            ids = f.readline()
+            self.extra_items_list = ast.literal_eval(ids)
 
 
     def load_data(self):
@@ -54,7 +59,10 @@ class Data:
             # id is tuple of image and region id
             objectid = (row['image_id'], row['region_id'])
             self.obj2phrases[objectid].append(row['refexp'].split())
-            self.obj2split[objectid] = new_split_dict[row['image_id']]
+            if row['region_id'] in self.extra_items_list:
+                self.obj2split[objectid] = 'test'
+            else:
+                self.obj2split[objectid] = new_split_dict[row['image_id']]
 
         # print "Objects",len(obj2phrases)
 

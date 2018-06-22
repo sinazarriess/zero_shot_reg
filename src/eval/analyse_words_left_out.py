@@ -8,6 +8,8 @@ from pprint import pprint
 
 model_path = 'model/with_reduced_vocab/'
 
+
+# TODO run generatei2t again with new split in lstm.data
 class Analyse():
     def __init__(self):
         self.analysis_dict = defaultdict()
