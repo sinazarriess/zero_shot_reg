@@ -8,7 +8,7 @@ import ast
 
 class Data:
 
-    def __init__(self, words_excluded= [],imgfeatpath="../data/refcoco/mscoco_vgg19_refcoco.npz",
+    def __init__(self, words_excluded= [], cats_excluded = [],imgfeatpath="../data/refcoco/mscoco_vgg19_refcoco.npz",
                  refspath="../data/refcoco/refcoco_refdf.json.gz", splitpath="../data/refcoco/refcoco_splits.json"):
 
         self.imgfeatures_path = imgfeatpath
@@ -16,6 +16,7 @@ class Data:
         self.split_path = splitpath
         self.discarded_words = []
         self.excluded_words = words_excluded
+        self.excluded_categories_ids = cats_excluded
         self.refs_moved_to_test = [] # ids of all those words ignored and put into test set
 
         self.load_data()
@@ -27,10 +28,6 @@ class Data:
             json.dump(self.discarded_words, f)
         with open(p.results_data_dir + '/refs_moved_to_test.json', 'w') as f:
             json.dump(self.refs_moved_to_test, f)
-
-        with open('../eval/model/with_reduced_vocab/refs_moved_to_test.json', 'r') as f:
-            ids = f.readline()
-            self.extra_items_list = ast.literal_eval(ids)
 
 
     def load_data(self):
@@ -59,10 +56,7 @@ class Data:
             # id is tuple of image and region id
             objectid = (row['image_id'], row['region_id'])
             self.obj2phrases[objectid].append(row['refexp'].split())
-            if row['region_id'] in self.extra_items_list:
-                self.obj2split[objectid] = 'test'
-            else:
-                self.obj2split[objectid] = new_split_dict[row['image_id']]
+            self.obj2split[objectid] = new_split_dict[row['image_id']]
 
         # print "Objects",len(obj2phrases)
 
@@ -75,6 +69,7 @@ class Data:
         selected_img_features = []
         test_list = []
         test_count = 0
+        second_test = 0
 
         # tqdm visualizes progress in the terminal :)
         self.raw_dataset = {'train': {'filenames': list(), 'images': list(), 'captions': list()},
@@ -106,6 +101,10 @@ class Data:
                         if word in ref:
                             isIgnored = True
 
+                    if obj2phrases_item[1] in self.excluded_categories_ids:
+                        isIgnored = True
+                        second_test += 1
+
                 image = image / np.linalg.norm(image)
 
                 if not isIgnored:
@@ -120,6 +119,7 @@ class Data:
                     print filename
 
         print 'raw data set', len(self.raw_dataset['train']['captions'])  # 42279
+        print 'second test, should be 1276?: ', second_test
 
         ''''' todo remove'''
         print(len(self.raw_dataset['train']['images']) + len(self.raw_dataset['val']['images']) + \

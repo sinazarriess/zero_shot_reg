@@ -175,4 +175,4 @@ if __name__ == "__main__":
     a = Analyse()
     a.analyse()
     a.visualize_unknown()
-   # a.analyze_freqs()
+    a.analyze_freqs()
