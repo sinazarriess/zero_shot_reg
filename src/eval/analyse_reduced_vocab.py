@@ -7,7 +7,7 @@ import utils
 from pprint import pprint
 import numpy as np
 
-modelpath = './model/with_reduced_vocab/'
+modelpath = './model/with_reduced_cats/'
 file_to_analyse = 'restoredmodel_refs_greedy.json'#'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json'
 #rawdata_path = "../data/refcoco/refcoco_refdf.json.gz"
 

@@ -69,7 +69,6 @@ class Data:
         selected_img_features = []
         test_list = []
         test_count = 0
-        second_test = 0
 
         # tqdm visualizes progress in the terminal :)
         self.raw_dataset = {'train': {'filenames': list(), 'images': list(), 'captions': list()},
@@ -103,7 +102,6 @@ class Data:
 
                     if obj2phrases_item[1] in self.excluded_categories_ids:
                         isIgnored = True
-                        second_test += 1
 
                 image = image / np.linalg.norm(image)
 
@@ -119,7 +117,6 @@ class Data:
                     print filename
 
         print 'raw data set', len(self.raw_dataset['train']['captions'])  # 42279
-        print 'second test, should be 1276?: ', second_test
 
         ''''' todo remove'''
         print(len(self.raw_dataset['train']['images']) + len(self.raw_dataset['val']['images']) + \
@@ -151,7 +148,6 @@ class Data:
         print "all tokens count: ", len(self.vocab)
         # discard words with very low frequency
         while token_freqs[self.vocab[-1]] < p.min_token_freq:
-            print token_freqs[self.vocab[-1]]
             self.discarded_words.append(self.vocab.pop())
 
         self.vocab_size = len(self.vocab) + 2  # + edge and unknown tokens

@@ -8,7 +8,7 @@ from collections import defaultdict, OrderedDict
 import time
 import operator
 
-model_dir = './model/with_reduced_vocab/'
+model_dir = './model/with_reduced_cats/'
 edge_index = 0
 unknown_index = 1
 
