@@ -81,7 +81,7 @@ class Evalutator:
 if __name__ == '__main__':
 
     #eval.run_eval('./jsons/no_unknown_for_comp.json')
-    model_path = 'model/with_reduced_cats/'
+    model_path = 'model/with_reduced_cats_2/'
     eval = Evalutator(model_path)
     eval.run_eval(model_path + 'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') #'restoredmodel_refs_beam.json')
     score_1 = 0

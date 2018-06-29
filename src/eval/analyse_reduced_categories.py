@@ -7,11 +7,11 @@ import utils
 from pprint import pprint
 import numpy as np
 
-modelpath = './model/with_reduced_cats/'
+modelpath = './model/with_reduced_cats_2/'
 file_to_analyse = 'restoredmodel_refs_greedy.json'#'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json'
 #rawdata_path = "../data/refcoco/refcoco_refdf.json.gz"
 
-categories_excluded = [ 19 ]
+categories_excluded = [ 73 ]
 
 class Analyse:
     def __init__(self):
@@ -39,13 +39,15 @@ class Analyse:
         cow_counter = 0
         animal_counter = 0
         animals = ['sheep', 'bear', 'elephant', 'giraffe', 'dog', 'bird']
+        laptop_counter = 0
+        screen_counter = 0
+        device_counter = 0
+        devices = [ 'phone', 'keyboard', 'monitor', 'tv']
         phrases_with_excluded_category = list()
         for index, row in self.bounding_boxes.iterrows():
             id = str(row['region_id'])
             if row['cat'] in categories_excluded:
                 if id in self.refs.keys():
-             #   phrases_with_excluded_category.append()
-            #if id in self.extra_items_list:
                     tmpdict = defaultdict()
                     tmpdict['cat'] = self.categories[ str(row['cat']) ]
                     tmpdict['RE'] = self.refs[id]
@@ -59,14 +61,24 @@ class Analyse:
                     animal = False
                     unknown = False
                     cow = False
-                    tmp = [e for e in self.refs[id] if any(x in e for x in animals)]
+                    screen = False
+                    device = False
+                    laptop = False
+                    tmp = [e for e in self.refs[id] if any(x in e for x in devices)]
+                    tmp2 = [e for e in self.refs[id] if any(x in e for x in animals)]
                     if len(tmp) > 0:
-                         animal = True
+                        device = True
+                    if len(tmp2) > 0:
+                        animal = True
                     for word in self.refs[id]:
-                        if 'cow' in word:
-                            cow = True
+                        if 'screen' in word:
+                            screen = True
                         if 'UNKNOWN' in word:
                             unknown = True
+                        if 'laptop' in word:
+                            laptop = True
+                        if 'cow' in word:
+                            cow = True
 
                     if animal:
                         animal_counter += 1
@@ -74,11 +86,20 @@ class Analyse:
                         counter += 1
                     if cow:
                         cow_counter += 1
+                    if device:
+                        device_counter += 1
+                    if screen:
+                        screen_counter += 1
+                    if laptop:
+                        laptop_counter += 1
 
         print "Number of phrases containing UNKNOWN: ", counter
         print "Number of phrases describing excluded categories: ", len(self.analysis_dict)
         print "Cow prediction: ", cow_counter / float(len(self.analysis_dict))
         print "Animal prediction: ", animal_counter / float(len(self.analysis_dict))
+        print "Laptop prediction: ", laptop_counter / float(len(self.analysis_dict))
+        print "Screen prediction: ", screen_counter / float(len(self.analysis_dict))
+        print "Device prediction: ", device_counter / float(len(self.analysis_dict))
 
         for item in self.analysis_dict:
             pprint(self.analysis_dict[item])

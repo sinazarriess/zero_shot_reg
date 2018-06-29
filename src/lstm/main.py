@@ -52,7 +52,7 @@ def parse_categories(excluded_cats):
 if __name__ == '__main__':
 
    # words_excluded = ["juice", "soldier", "cookie", "watch", "lemon", "suv"]
-    categories_excluded = [ 73 ] # 19-horse  73-laptop
+    categories_excluded = [ 73 ] # 19-horse  73-laptopd
     cat_ids = parse_categories(categories_excluded)
 
     # #data_interface = data.Data(words_excluded)
