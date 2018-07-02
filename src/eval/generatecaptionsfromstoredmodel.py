@@ -59,16 +59,10 @@ class RefsGenerator:
                     indexes_distributions = predictions_function(gen_prefix)
                     candidate_dict = defaultdict()
 
-             #       max_value = 0
-             #       max_index = -1
                     for (next_index, next_prob) in enumerate(indexes_distributions[0]):
                         candidate_dict[next_index] = next_prob
-             #           if next_prob > max_value:
-             #               max_value = next_prob
-             #               max_index = next_index
 
-                    # sort distributions to get highest probabilities --> (index,prob)
-                   # sorted_distribution = sorted(candidate_dict.items(), key = operator.itemgetter(1))
+                    # probabilities ordered with ascending value
                     sorted_distribution = OrderedDict(sorted(candidate_dict.items(), key=lambda t: t[1]))
                     max_index = sorted_distribution.items()[-1][0]
 
