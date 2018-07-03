@@ -11,6 +11,13 @@ from pprint import pprint
 #import statistics
 
 
+words_excluded = ["juice", "soldier", "cookie", "watch", "lemon", "suv"]
+categories_excluded = [6]  # 19-horse  73-laptop 6-bus
+
+#  ATTENTION enter words that are supposed to be in the dictionary for zero-shot naming - e.g. the name of
+#  an excluded category or excluded words
+words = ["bus"]
+
 def generate_indextotoken(data):
     with open(p.results_data_dir + '/raw_dataset_filenames.txt', 'w') as f:
         np.savetxt(f, data.raw_dataset['test']['filenames'], delimiter=', ', fmt="%s")
@@ -21,6 +28,18 @@ def generate_indextotoken(data):
     with open(p.results_data_dir + '/raw_dataset.txt', 'w') as f:
         np.savetxt(f, data.raw_dataset['test']['images'], delimiter=', ')
 
+
+    with open(p.results_data_dir + '/vocab_list.txt', 'w') as f:
+        np.savetxt(f, data.vocab, delimiter=', ', fmt="%s")
+
+    with open(p.results_data_dir + '/raw_dataset_filenames_train.txt', 'w') as f:
+        np.savetxt(f, data.raw_dataset['train']['filenames'], delimiter=', ', fmt="%s")
+
+    with open(p.results_data_dir + '/raw_dataset_train.txt', 'w') as f:
+        np.savetxt(f, data.raw_dataset['train']['images'], delimiter=', ')
+
+    with open(p.results_data_dir + '/additional_vocab.txt', 'w') as f:
+        np.savetxt(f, data.words, delimiter=', ', fmt='%s')
 
 def parse_categories(excluded_cats):
     tmp = np.zeros(91, dtype=int)
@@ -51,12 +70,10 @@ def parse_categories(excluded_cats):
 
 if __name__ == '__main__':
 
-   # words_excluded = ["juice", "soldier", "cookie", "watch", "lemon", "suv"]
-    categories_excluded = [ 73 ] # 19-horse  73-laptopd
     cat_ids = parse_categories(categories_excluded)
 
     # #data_interface = data.Data(words_excluded)
-    data_interface = data.Data([], cat_ids)
+    data_interface = data.Data([], cat_ids, words)
     print data_interface.vocab_size
     training = train.Learn()
 

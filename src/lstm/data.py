@@ -8,7 +8,7 @@ import ast
 
 class Data:
 
-    def __init__(self, words_excluded= [], cats_excluded = [],imgfeatpath="../data/refcoco/mscoco_vgg19_refcoco.npz",
+    def __init__(self, words_excluded= [], cats_excluded = [], additional_words = [],imgfeatpath="../data/refcoco/mscoco_vgg19_refcoco.npz",
                  refspath="../data/refcoco/refcoco_refdf.json.gz", splitpath="../data/refcoco/refcoco_splits.json"):
 
         self.imgfeatures_path = imgfeatpath
@@ -17,6 +17,7 @@ class Data:
         self.discarded_words = []
         self.excluded_words = words_excluded
         self.excluded_categories_ids = cats_excluded
+        self.additional = additional_words
         self.refs_moved_to_test = [] # ids of all those words ignored and put into test set
 
         self.load_data()

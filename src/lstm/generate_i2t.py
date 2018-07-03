@@ -23,3 +23,6 @@ if __name__ == '__main__':
 
     with open(p.results_data_dir + '/raw_dataset_train.txt', 'w') as f:
         np.savetxt(f, data_interface.raw_dataset['train']['images'], delimiter=', ')
+
+    with open(p.results_data_dir + '/additional_vocab.txt', 'w') as f:
+        np.savetxt(f, data_interface.additional, delimiter=', ', fmt='%s')

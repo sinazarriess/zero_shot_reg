@@ -11,6 +11,7 @@ class Embeddings:
         self.model_initialized = False
         self.global_model_initialized = False
         self.modelpath = modelpath
+      #  self.additional_words = additional_words  # words that were removed during training!
 
     def init_reduced_embeddings(self):
         if not self.model_initialized:
@@ -35,6 +36,13 @@ class Embeddings:
     def embeddings_for_vocab(self):
         with open(self.modelpath + 'vocab_list.txt', 'r') as f:
             self.model_vocab = f.read().splitlines()
+        with open(self.modelpath + 'additional_vocab.txt', 'r') as f:
+            self.additional_words = f.read().splitlines()
+
+        complete_vocab = self.model_vocab + self.additional_words
+        print complete_vocab
+        print len(complete_vocab)
+        print self.additional_words
 
         self.embeddings  = defaultdict()
         for word in self.model_vocab:
@@ -45,7 +53,7 @@ class Embeddings:
                 print word
 
     def write_new_glove_file(self):
-        with open(modelpath + "reduced_vocab_glove.txt", "w") as f:
+        with open(self.modelpath + "reduced_vocab_glove.txt", "w") as f:
             for vocab_word in self.embeddings:
                 f.write(vocab_word + " ")
                 for dim in self.embeddings[vocab_word]:
@@ -89,6 +97,19 @@ class Embeddings:
             print "model not initialized"
         return ""
 
+    def get_mean_vec(self, vecs):
+        self.get_words_for_vector()
+
+    # def words2embedding_weighted(word_predictions, word_probs, word_vectors):
+    #     vecs = []
+    #     for i in range(len(word_predictions)):
+    #         wlist = word_predictions[i]
+    #         plist = word_probs[i]
+    #         new_vec = np.sum([word_vectors[w].astype(float) * plist[x] for x, w in enumerate(wlist)], axis=0)
+    #         vecs.append(new_vec)
+    #     vecs = np.array(vecs)
+    #     # print "Embedding matrix",vecs.shape
+    #     return vecs
 
 if __name__ == '__main__':
     embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats/')
@@ -99,5 +120,10 @@ if __name__ == '__main__':
     word_model = embeddings.init_reduced_embeddings()
 
     ## how to use
-    horse_vec = embeddings.get_vector_for_word('laptop')
+    horse_vec = embeddings.get_vector_for_word('horse')
     print embeddings.get_words_for_vector(horse_vec, 1)
+
+    a = embeddings.get_vector_for_word('cow')
+    b = embeddings.get_vector_for_word('pony')
+    c = embeddings.get_vector_for_word('man')
+    print embeddings.get_words_for_vector( a+b+c, 5)
