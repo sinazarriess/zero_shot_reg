@@ -12,11 +12,11 @@ from pprint import pprint
 
 
 words_excluded = ["juice", "soldier", "cookie", "watch", "lemon", "suv"]
-categories_excluded = [6]  # 19-horse  73-laptop 6-bus
+categories_excluded = [ 6 ]  # 19-horse  73-laptop 6-bus
 
 #  ATTENTION enter words that are supposed to be in the dictionary for zero-shot naming - e.g. the name of
 #  an excluded category or excluded words
-words = ["bus"]
+words = [ "bus" ] #["bus"] #"juice", "soldier", "cookie", "watch", "lemon", "suv"
 
 def generate_indextotoken(data):
     with open(p.results_data_dir + '/raw_dataset_filenames.txt', 'w') as f:
@@ -39,7 +39,7 @@ def generate_indextotoken(data):
         np.savetxt(f, data.raw_dataset['train']['images'], delimiter=', ')
 
     with open(p.results_data_dir + '/additional_vocab.txt', 'w') as f:
-        np.savetxt(f, data.words, delimiter=', ', fmt='%s')
+        np.savetxt(f, words, delimiter=', ', fmt='%s')
 
 def parse_categories(excluded_cats):
     tmp = np.zeros(91, dtype=int)
@@ -72,11 +72,10 @@ if __name__ == '__main__':
 
     cat_ids = parse_categories(categories_excluded)
 
-    # #data_interface = data.Data(words_excluded)
+    #data_interface = data.Data(words_excluded)
     data_interface = data.Data([], cat_ids, words)
     print data_interface.vocab_size
     training = train.Learn()
-
     for run in range(1, params.num_runs + 1):
         model = lstm.LSTM(run, data_interface.vocab_size)
         model.build_network()

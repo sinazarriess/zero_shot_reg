@@ -7,11 +7,11 @@ import utils
 from pprint import pprint
 import numpy as np
 
-modelpath = './model/with_reduced_cats_2/'
+modelpath = './model/with_reduced_cats_horse/'
 file_to_analyse = 'restoredmodel_refs_greedy.json'#'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json'
 #rawdata_path = "../data/refcoco/refcoco_refdf.json.gz"
 
-categories_excluded = [ 73 ]
+categories_excluded = [ 6 ]
 
 class Analyse:
     def __init__(self):
@@ -43,6 +43,13 @@ class Analyse:
         screen_counter = 0
         device_counter = 0
         devices = [ 'phone', 'keyboard', 'monitor', 'tv']
+
+        truck_counter = 0
+        bus_counter = 0
+        car_counter = 0
+        train_counter = 0
+        vehicles = ['truck', 'car', 'van', 'tram']
+        vehicle_counter = 0
         phrases_with_excluded_category = list()
         for index, row in self.bounding_boxes.iterrows():
             id = str(row['region_id'])
@@ -64,34 +71,41 @@ class Analyse:
                     screen = False
                     device = False
                     laptop = False
+                    train = False
+                    truck = False
+                    bus = False
+                    car = False
+                    vehicle = False
                     tmp = [e for e in self.refs[id] if any(x in e for x in devices)]
                     tmp2 = [e for e in self.refs[id] if any(x in e for x in animals)]
+                    tmp3 = [e for e in self.refs[id] if any(x in e for x in vehicles)]
                     if len(tmp) > 0:
                         device = True
                     if len(tmp2) > 0:
                         animal = True
+                    if len(tmp3) > 0:
+                        vehicle = True
                     for word in self.refs[id]:
-                        if 'screen' in word:
-                            screen = True
-                        if 'UNKNOWN' in word:
-                            unknown = True
-                        if 'laptop' in word:
-                            laptop = True
-                        if 'cow' in word:
-                            cow = True
+                        if 'screen' in word: screen = True
+                        if 'UNKNOWN' in word: unknown = True
+                        if 'laptop' in word: laptop = True
+                        if 'cow' in word: cow = True
+                        if 'train' in word: train = True
+                        if 'bus' in word: bus = True
+                        if 'car' in word: car = True
+                        if 'truck' in word: truck = True
 
-                    if animal:
-                        animal_counter += 1
-                    if unknown:
-                        counter += 1
-                    if cow:
-                        cow_counter += 1
-                    if device:
-                        device_counter += 1
-                    if screen:
-                        screen_counter += 1
-                    if laptop:
-                        laptop_counter += 1
+                    if animal: animal_counter += 1
+                    if unknown: counter += 1
+                    if cow: cow_counter += 1
+                    if device: device_counter += 1
+                    if screen: screen_counter += 1
+                    if laptop: laptop_counter += 1
+                    if truck: truck_counter += 1
+                    if car: car_counter += 1
+                    if bus: bus_counter += 1
+                    if train: train_counter += 1
+                    if vehicle: vehicle_counter += 1
 
         print "Number of phrases containing UNKNOWN: ", counter
         print "Number of phrases describing excluded categories: ", len(self.analysis_dict)
@@ -100,6 +114,11 @@ class Analyse:
         print "Laptop prediction: ", laptop_counter / float(len(self.analysis_dict))
         print "Screen prediction: ", screen_counter / float(len(self.analysis_dict))
         print "Device prediction: ", device_counter / float(len(self.analysis_dict))
+        print "Bus prediction: ", bus_counter / float(len(self.analysis_dict))
+        print "Car prediction: ", car_counter / float(len(self.analysis_dict))
+        print "Truck prediction: ", truck_counter / float(len(self.analysis_dict))
+        print "Train prediction: ", train_counter / float(len(self.analysis_dict))
+        print "Vehicle prediction: ", vehicle_counter / float(len(self.analysis_dict))
 
         for item in self.analysis_dict:
             pprint(self.analysis_dict[item])

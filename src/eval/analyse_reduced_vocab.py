@@ -7,7 +7,7 @@ import utils
 from pprint import pprint
 import numpy as np
 
-modelpath = './model/with_reduced_cats/'
+modelpath = './model/with_reduced_vocab/'
 file_to_analyse = 'restoredmodel_refs_greedy.json'#'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json'
 #rawdata_path = "../data/refcoco/refcoco_refdf.json.gz"
 
@@ -55,6 +55,9 @@ class Analyse:
 
         for item in self.analysis_dict:
             pprint(self.analysis_dict[item])
+
+       # for item in self.analysis_dict:
+        #    print(self.analysis_dict[item]['RE'], self.analysis_dict[item]['cat'])
 
 
 if __name__ == "__main__":

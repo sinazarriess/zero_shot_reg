@@ -4,6 +4,8 @@ import json
 import numpy as np
 
 if __name__ == '__main__':
+
+    ###### !!!!!!!! add words or cats to be left out!
     data_interface = data.Data()
     with open(p.results_data_dir + '/index2token.json', 'w') as f:
         json.dump(data_interface.index_to_token, f)

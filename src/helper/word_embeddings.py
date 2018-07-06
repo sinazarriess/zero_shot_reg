@@ -109,7 +109,7 @@ class Embeddings:
     #         vecs.append(new_vec)
     #     vecs = np.array(vecs)
     #     # print "Embedding matrix",vecs.shape
-    #     return vecs
+    #     return vecsgit a
 
 if __name__ == '__main__':
     embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats/')
@@ -123,7 +123,11 @@ if __name__ == '__main__':
     horse_vec = embeddings.get_vector_for_word('horse')
     print embeddings.get_words_for_vector(horse_vec, 1)
 
-    a = embeddings.get_vector_for_word('cow')
-    b = embeddings.get_vector_for_word('pony')
-    c = embeddings.get_vector_for_word('man')
+    a = embeddings.get_vector_for_word('red')
+    b = embeddings.get_vector_for_word('left')
+    c = embeddings.get_vector_for_word('bottle')
     print embeddings.get_words_for_vector( a+b+c, 5)
+
+    #'black', 'bus', 'train', 'big'
+    #'bus', 'car', 'train'
+    #'truck', 'car', 'train'
