@@ -2,6 +2,7 @@ from gensim.test.utils import datapath, get_tmpfile
 from gensim.models import KeyedVectors
 from gensim.scripts.glove2word2vec import glove2word2vec
 from collections import defaultdict
+import numpy as np
 
 glove_files_path = "/mnt/Data/zero_shot_reg/gloVe/"
 
@@ -100,7 +101,27 @@ class Embeddings:
     def get_mean_vec(self, vecs):
         self.get_words_for_vector()
 
-    # def words2embedding_weighted(word_predictions, word_probs, word_vectors):
+    def vectors2embedding_weighted(self, word_probs, word_vectors):
+        new_vec = np.sum([word_vectors[x].astype(float) * word_probs[x] for x in range(len(word_probs))], axis=0)
+        vecs = np.array(new_vec)
+        return new_vec
+
+    def words2embedding_weighted(self, predictions, word_probs):
+        vectors = list()
+        valid_words_counter = 0
+        for word in predictions:
+            if not (word == 'EDGE' or word == 'UNKNOWN'):
+                vec = self.get_vector_for_word(word)
+                if len(vec) > 0:
+                    vectors.append(vec)
+                    valid_words_counter += 1
+        if valid_words_counter > 0:
+            new_vec = np.sum([vectors[x].astype(float) * word_probs[x] for x in range(valid_words_counter)], axis=0)
+            vecs = np.array(new_vec)
+            return new_vec
+        return None
+
+    # def words2embedding_weighted(self, word_predictions, word_probs, word_vectors):
     #     vecs = []
     #     for i in range(len(word_predictions)):
     #         wlist = word_predictions[i]
@@ -109,12 +130,12 @@ class Embeddings:
     #         vecs.append(new_vec)
     #     vecs = np.array(vecs)
     #     # print "Embedding matrix",vecs.shape
-    #     return vecsgit a
+    #     return vecs
 
 if __name__ == '__main__':
-    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats/')
+    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_bus/')
     ## generate custom embeddings for a model (with reduced vocabulary)
-    # embeddings.generate_reduced_wv2_file()
+   # embeddings.generate_reduced_wv2_file()
 
     ## initialize custom embeddings
     word_model = embeddings.init_reduced_embeddings()
@@ -123,10 +144,14 @@ if __name__ == '__main__':
     horse_vec = embeddings.get_vector_for_word('horse')
     print embeddings.get_words_for_vector(horse_vec, 1)
 
-    a = embeddings.get_vector_for_word('red')
-    b = embeddings.get_vector_for_word('left')
-    c = embeddings.get_vector_for_word('bottle')
-    print embeddings.get_words_for_vector( a+b+c, 5)
+    a = embeddings.get_vector_for_word('car')
+    b = embeddings.get_vector_for_word('area')
+    c = embeddings.get_vector_for_word('thing')
+    d = embeddings.get_vector_for_word('truck')
+
+    probs = [0.05730285, 0.057440747, 0.07579447, 0.08411062]
+    words = ['car', 'area', 'thing', 'truck']
+    print embeddings.get_words_for_vector(embeddings.words2embedding_weighted(words, probs), 10)
 
     #'black', 'bus', 'train', 'big'
     #'bus', 'car', 'train'

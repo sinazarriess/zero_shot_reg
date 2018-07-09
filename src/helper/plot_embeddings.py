@@ -11,7 +11,7 @@ def display_closestwords_tsnescatterplot(model, word):
     word_labels = [word]
 
     # get close words
-    close_words = model.similar_by_word(word)
+    close_words = model.similar_by_word(word,50)
 
     # add the vector for each of the closest words to the array
     arr = np.append(arr, np.array([model[word]]), axis=0)
@@ -40,4 +40,4 @@ def display_closestwords_tsnescatterplot(model, word):
 if __name__ == "__main__":
     embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats/')
     word_model = embeddings.init_reduced_embeddings()
-    display_closestwords_tsnescatterplot(word_model, 'horse')
+    display_closestwords_tsnescatterplot(word_model, 'bus')

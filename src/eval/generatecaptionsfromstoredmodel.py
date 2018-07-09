@@ -7,6 +7,7 @@ import lstm.params as p
 from collections import defaultdict, OrderedDict
 import time
 import operator
+import ast
 
 model_dir = './model/with_reduced_cats_bus/'
 edge_index = 0
@@ -29,6 +30,12 @@ class RefsGenerator:
         for (i, item) in enumerate(self.filenames):
             self.oids.append(str(item).split("_")[1])
         self.candidates4eval = defaultdict()
+        self.alternatives_dict = defaultdict()
+
+    def read_excluded_ids(self):
+        with open(model_dir + 'refs_moved_to_test.json', 'r') as f:
+            ids = f.readline()
+        return ast.literal_eval(ids)
 
     def initialize_model(self):
         self.imported_meta = tf.train.import_meta_graph(model_dir + 'inject_refcoco_refrnn_compositional_3_512_1/model.meta')
@@ -39,7 +46,7 @@ class RefsGenerator:
         predictions = graph.get_tensor_by_name('softmax/prediction:0')
         self.last_prediction = predictions[:, -1]
 
-    def generate_refs_greedily(self):
+    def generate_refs_greedily(self, excluded_ids = []):
         with tf.Session() as sess:
             average_utterance_length = 0
             utterance_counter = 0
@@ -47,36 +54,45 @@ class RefsGenerator:
             self.captions_greedy = list()
 
             for (i, image_input) in enumerate(self.images):
-                predictions_function = (lambda prefixes: sess.run(self.last_prediction, feed_dict={
-                    self.seq_in: prefixes,
-                    self.seq_len: [len(p) for p in prefixes],
-                    self.image: image_input.reshape([1, -1]).repeat(len(prefixes), axis=0)
-                }))
-                gen_prefix = list()
-                gen_prefix.append([0])  # edge index
-                isComplete = False
-                while not isComplete:
-                    indexes_distributions = predictions_function(gen_prefix)
-                    candidate_dict = defaultdict()
+                if self.oids[i] in excluded_ids:
+                    predictions_function = (lambda prefixes: sess.run(self.last_prediction, feed_dict={
+                        self.seq_in: prefixes,
+                        self.seq_len: [len(p) for p in prefixes],
+                        self.image: image_input.reshape([1, -1]).repeat(len(prefixes), axis=0)
+                    }))
+                    gen_prefix = list()
+                    gen_prefix.append([0])  # edge index
+                    isComplete = False
+                    temp_dict = defaultdict()
+                    while not isComplete:
+                        indexes_distributions = predictions_function(gen_prefix)
+                        candidate_dict = defaultdict()
 
-                    for (next_index, next_prob) in enumerate(indexes_distributions[0]):
-                        candidate_dict[next_index] = next_prob
+                        for (next_index, next_prob) in enumerate(indexes_distributions[0]):
+                            candidate_dict[next_index] = next_prob
 
-                    # probabilities ordered with ascending value
-                    sorted_distribution = OrderedDict(sorted(candidate_dict.items(), key=lambda t: t[1]))
-                    max_index = sorted_distribution.items()[-1][0]
+                        # probabilities ordered with ascending value
+                        sorted_distribution = OrderedDict(sorted(candidate_dict.items(), key=lambda t: t[1]))
+                        max_index = sorted_distribution.items()[-1][0]
 
-                    if max_index == edge_index:
-                        isComplete = True
-                        average_utterance_length += len(gen_prefix[0][1:])
-                        utterance_counter += 1
-                        self.captions_greedy.append(' '.join(self.new_index2token[index] for index in gen_prefix[0][1:]))
-                    else:
-                        gen_prefix[0].append(max_index)
-                        if max_index == unknown_index:
-                            max_candidates = [self.new_index2token[tuple[0]] for tuple in sorted_distribution.items()[-5:]]
-                            #print "max_candidates for image ", self.oids[i], " are (falling probability): ", max_candidates
-                            self.candidates4eval[self.oids[i]] = max_candidates
+                        best_candidates = [(self.new_index2token[tuple[0]], str(tuple[1])) for tuple in sorted_distribution.items()[-5:]]
+
+                        if max_index == edge_index:
+                            isComplete = True
+                            average_utterance_length += len(gen_prefix[0][1:])
+                            utterance_counter += 1
+                            self.captions_greedy.append(' '.join(self.new_index2token[index] for index in gen_prefix[0][1:]))
+
+                            self.alternatives_dict[self.oids[i]] = temp_dict
+                        else:
+                            # position in utterance
+                            temp_dict[len(gen_prefix[0])] = best_candidates
+
+                            gen_prefix[0].append(max_index)
+                            if max_index == unknown_index:
+                                #print "max_candidates for image ", self.oids[i], " are (falling probability): ", max_candidates
+                                self.candidates4eval[self.oids[i]] = best_candidates  #TODO might overwrite in very rare cases
+
             print "Average utterance length greedy: ", average_utterance_length/float(utterance_counter)
 
     def generate_refs_with_beam(self):
@@ -108,12 +124,15 @@ class RefsGenerator:
         with open(model_dir + 'highest_prob_candidates.json', 'w') as f:
             json.dump(self.candidates4eval, f)
 
+        with open(model_dir + 'all_highest_probs.json', 'w') as f:
+            json.dump(self.alternatives_dict, f)
 
 if __name__ == "__main__":
     gen = RefsGenerator()
     gen.initialize_model()
     start = time.time()
-    gen.generate_refs_greedily()
+    ids = gen.read_excluded_ids()
+    gen.generate_refs_greedily(ids)
     end = time.time()
     print (end - start)
     gen.save_refs(gen.captions_greedy, 'restoredmodel_refs_greedy')
