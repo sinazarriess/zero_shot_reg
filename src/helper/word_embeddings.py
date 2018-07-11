@@ -3,6 +3,7 @@ from gensim.models import KeyedVectors
 from gensim.scripts.glove2word2vec import glove2word2vec
 from collections import defaultdict
 import numpy as np
+import time
 
 glove_files_path = "/mnt/Data/zero_shot_reg/gloVe/"
 
@@ -12,7 +13,6 @@ class Embeddings:
         self.model_initialized = False
         self.global_model_initialized = False
         self.modelpath = modelpath
-      #  self.additional_words = additional_words  # words that were removed during training!
 
     def init_reduced_embeddings(self):
         if not self.model_initialized:
@@ -30,7 +30,7 @@ class Embeddings:
         if not self.global_model_initialized:
             global_tmp = get_tmpfile(glove_files_path + "word2vec.txt")
             self.global_model = KeyedVectors.load_word2vec_format(global_tmp)
-            print self.global_model.similar_by_vector(self.global_model['horse'], topn=3)
+            #print self.global_model.similar_by_vector(self.global_model['horse'], topn=3)
             self.global_model_initialized = True
         return self.global_model
 
@@ -80,22 +80,27 @@ class Embeddings:
             if word in self.global_model.vocab:
                 return self.global_model[word]
         else:
-            print "model not initialized"
+            print "global model not initialized (1)"
         return []
 
     def get_vector_for_word(self, word):
         if self.model_initialized:
             if word in self.model.vocab:
                 return self.model[word]
+        elif self.global_model_initialized:
+            if word in self.global_model.vocab:
+                return self.global_model[word]
         else:
-            print "model not initialized"
+            print "model not initialized (2) "
         return []
 
     def get_words_for_vector(self, vec, n):
         if self.model_initialized:
             return self.model.similar_by_vector(vec, topn=n)
+        elif self.global_model_initialized:                             #todo clean up class
+            return self.global_model.similar_by_vector(vec, topn=n)
         else:
-            print "model not initialized"
+            print "model not initialized (3)"
         return ""
 
     def get_mean_vec(self, vecs):
@@ -108,12 +113,14 @@ class Embeddings:
 
     def words2embedding_weighted(self, predictions, word_probs):
         vectors = list()
+        probs = list()
         valid_words_counter = 0
         for word in predictions:
             if not (word == 'EDGE' or word == 'UNKNOWN'):
                 vec = self.get_vector_for_word(word)
                 if len(vec) > 0:
                     vectors.append(vec)
+                    probs.append(predictions.index(word))
                     valid_words_counter += 1
         if valid_words_counter > 0:
             new_vec = np.sum([vectors[x].astype(float) * word_probs[x] for x in range(valid_words_counter)], axis=0)
@@ -135,23 +142,34 @@ class Embeddings:
 if __name__ == '__main__':
     embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_bus/')
     ## generate custom embeddings for a model (with reduced vocabulary)
-   # embeddings.generate_reduced_wv2_file()
+    #embeddings.generate_reduced_wv2_file()
+
+    start = time.time()
 
     ## initialize custom embeddings
-    word_model = embeddings.init_reduced_embeddings()
+   # word_model = embeddings.init_reduced_embeddings()
+    word_model = embeddings.get_global_model()
+    end = time.time()
+    print (end - start)
 
+    start = time.time()
     ## how to use
     horse_vec = embeddings.get_vector_for_word('horse')
-    print embeddings.get_words_for_vector(horse_vec, 1)
+    #print embeddings.get_words_for_vector(horse_vec, 1)
 
-    a = embeddings.get_vector_for_word('car')
-    b = embeddings.get_vector_for_word('area')
-    c = embeddings.get_vector_for_word('thing')
-    d = embeddings.get_vector_for_word('truck')
+    end = time.time()
+    print (end - start)
+    print "Vocabs: ", len(word_model.vocab)
 
-    probs = [0.05730285, 0.057440747, 0.07579447, 0.08411062]
-    words = ['car', 'area', 'thing', 'truck']
-    print embeddings.get_words_for_vector(embeddings.words2embedding_weighted(words, probs), 10)
+    # a = embeddings.get_vector_for_word('car')
+    # print a
+    # b = embeddings.get_vector_for_word('area')
+    # c = embeddings.get_vector_for_word('thing')
+    # d = embeddings.get_vector_for_word('truck')
+    #
+    # probs = [0.05730285, 0.057440747, 0.07579447, 0.08411062]
+    # words = ['car', 'area', 'thing', 'truck']
+    # print embeddings.get_words_for_vector(embeddings.words2embedding_weighted(words, probs), 10)
 
     #'black', 'bus', 'train', 'big'
     #'bus', 'car', 'train'

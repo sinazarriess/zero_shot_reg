@@ -9,7 +9,6 @@ import time
 import operator
 import ast
 
-model_dir = './model/with_reduced_cats_bus/'
 edge_index = 0
 unknown_index = 1
 
@@ -17,15 +16,17 @@ def final_prediction(self, tensor):
     return tensor[:, -1]
 
 class RefsGenerator:
-    def __init__(self):
-        self.filenames = np.genfromtxt(model_dir + 'raw_dataset_filenames.txt', delimiter=',', dtype=None, encoding=None)
-        with open(model_dir + 'index2token.json', "r") as f:
+    def __init__(self, nmbr, modeldir):
+        self.model_dir = modeldir
+        self.number_of_candidates = nmbr
+        self.filenames = np.genfromtxt(self.model_dir + 'raw_dataset_filenames.txt', delimiter=',', dtype=None, encoding=None)
+        with open(self.model_dir + 'index2token.json', "r") as f:
             index2token = json.load(f)
         self.new_index2token= {int(key): value for key, value in index2token.iteritems()}
         # keep unknown tokens
         self.new_index2token[unknown_index] = "UNKNOWN"
         self.new_index2token[edge_index] = "EDGE"
-        self.images = np.genfromtxt(model_dir + 'raw_dataset.txt', delimiter=',', dtype=None)
+        self.images = np.genfromtxt(self.model_dir + 'raw_dataset.txt', delimiter=',', dtype=None)
         self.oids = list()
         for (i, item) in enumerate(self.filenames):
             self.oids.append(str(item).split("_")[1])
@@ -33,12 +34,12 @@ class RefsGenerator:
         self.alternatives_dict = defaultdict()
 
     def read_excluded_ids(self):
-        with open(model_dir + 'refs_moved_to_test.json', 'r') as f:
+        with open(self.model_dir + 'refs_moved_to_test.json', 'r') as f:
             ids = f.readline()
         return ast.literal_eval(ids)
 
     def initialize_model(self):
-        self.imported_meta = tf.train.import_meta_graph(model_dir + 'inject_refcoco_refrnn_compositional_3_512_1/model.meta')
+        self.imported_meta = tf.train.import_meta_graph(self.model_dir + 'inject_refcoco_refrnn_compositional_3_512_1/model.meta')
         graph = tf.get_default_graph()
         self.seq_in = graph.get_tensor_by_name('seq_in:0')
         self.seq_len = graph.get_tensor_by_name('seq_len:0')
@@ -50,7 +51,7 @@ class RefsGenerator:
         with tf.Session() as sess:
             average_utterance_length = 0
             utterance_counter = 0
-            self.imported_meta.restore(sess, tf.train.latest_checkpoint(model_dir + 'inject_refcoco_refrnn_compositional_3_512_1'))
+            self.imported_meta.restore(sess, tf.train.latest_checkpoint(self.model_dir + 'inject_refcoco_refrnn_compositional_3_512_1'))
             self.captions_greedy = list()
 
             for (i, image_input) in enumerate(self.images):
@@ -75,7 +76,7 @@ class RefsGenerator:
                         sorted_distribution = OrderedDict(sorted(candidate_dict.items(), key=lambda t: t[1]))
                         max_index = sorted_distribution.items()[-1][0]
 
-                        best_candidates = [(self.new_index2token[tuple[0]], str(tuple[1])) for tuple in sorted_distribution.items()[-5:]]
+                        best_candidates = [(self.new_index2token[tuple[0]], str(tuple[1])) for tuple in sorted_distribution.items()[-self.number_of_candidates:]]
 
                         if max_index == edge_index:
                             isComplete = True
@@ -91,14 +92,14 @@ class RefsGenerator:
                             gen_prefix[0].append(max_index)
                             if max_index == unknown_index:
                                 #print "max_candidates for image ", self.oids[i], " are (falling probability): ", max_candidates
-                                self.candidates4eval[self.oids[i]] = best_candidates  #TODO might overwrite in very rare cases
+                                self.candidates4eval[self.oids[i]] = best_candidates  #might overwrite in very rare cases ('the UNKNOWN UNKNOWN')
 
             print "Average utterance length greedy: ", average_utterance_length/float(utterance_counter)
 
     def generate_refs_with_beam(self):
         with tf.Session() as sess:
             self.imported_meta.restore(sess, tf.train.latest_checkpoint(
-                model_dir + 'inject_refcoco_refrnn_compositional_3_512_1'))
+                self.model_dir + 'inject_refcoco_refrnn_compositional_3_512_1'))
 
             self.captions = list()
             searcher = lstm.beam.Search(self.new_index2token, True)
@@ -118,17 +119,18 @@ class RefsGenerator:
         for (idx, pair) in enumerate(zip(self.oids, captionslist)):  # captions
             dict4eval[pair[0]] = [pair[1]]
 
-        with open(model_dir + name + '.json', 'w') as f:
+        with open(self.model_dir + name + '.json', 'w') as f:
             json.dump(dict4eval, f)
 
-        with open(model_dir + 'highest_prob_candidates.json', 'w') as f:
+        with open(self.model_dir + 'highest_prob_candidates_ '+ str(self.number_of_candidates) + '.json', 'w') as f:
             json.dump(self.candidates4eval, f)
 
-        with open(model_dir + 'all_highest_probs.json', 'w') as f:
+        with open(self.model_dir + 'all_highest_probs_' + str(self.number_of_candidates) + '.json', 'w') as f:
             json.dump(self.alternatives_dict, f)
 
 if __name__ == "__main__":
-    gen = RefsGenerator()
+
+    gen = RefsGenerator(100, './model/with_reduced_cats_bus/')
     gen.initialize_model()
     start = time.time()
     ids = gen.read_excluded_ids()

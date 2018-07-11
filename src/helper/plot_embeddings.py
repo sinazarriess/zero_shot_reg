@@ -11,14 +11,14 @@ def display_closestwords_tsnescatterplot(model, word):
     word_labels = [word]
 
     # get close words
-    close_words = model.similar_by_word(word,50)
+    close_words = model.similar_by_word(word, 100)
 
     # add the vector for each of the closest words to the array
-    arr = np.append(arr, np.array([model[word]]), axis=0)
+    arr = np.append(arr, np.array([model[word]]), axis = 0)
     for wrd_score in close_words:
         wrd_vector = model[wrd_score[0]]
         word_labels.append(wrd_score[0])
-        arr = np.append(arr, np.array([wrd_vector]), axis=0)
+        arr = np.append(arr, np.array([wrd_vector]), axis = 0)
 
     # find tsne coords for 2 dimensions
     tsne = TSNE(n_components=2, random_state=0)
@@ -38,6 +38,8 @@ def display_closestwords_tsnescatterplot(model, word):
 
 
 if __name__ == "__main__":
-    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats/')
+    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_horse/')
     word_model = embeddings.init_reduced_embeddings()
-    display_closestwords_tsnescatterplot(word_model, 'bus')
+    #word_model = embeddings.get_global_model()
+    #display_closestwords_tsnescatterplot(word_model, 'horse')
+    print  word_model.similar_by_word('horse', 100)
