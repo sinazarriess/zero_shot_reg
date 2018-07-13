@@ -48,6 +48,7 @@ class RefsGenerator:
         self.last_prediction = predictions[:, -1]
 
     def generate_refs_greedily(self, excluded_ids = []):
+        self.excluded = excluded_ids
         with tf.Session() as sess:
             average_utterance_length = 0
             utterance_counter = 0
@@ -116,7 +117,12 @@ class RefsGenerator:
     def save_refs(self, captionslist, name):
 
         dict4eval = defaultdict(list)
-        for (idx, pair) in enumerate(zip(self.oids, captionslist)):  # captions
+
+        test = list()
+        for x in self.oids:
+            if x in self.excluded:
+                test.append(x)
+        for (idx, pair) in enumerate(zip(test, captionslist)):  # captions
             dict4eval[pair[0]] = [pair[1]]
 
         with open(self.model_dir + name + '.json', 'w') as f:
@@ -130,7 +136,7 @@ class RefsGenerator:
 
 if __name__ == "__main__":
 
-    gen = RefsGenerator(100, './model/with_reduced_cats_bus/')
+    gen = RefsGenerator(5, './model/with_reduced_cats_horse/')
     gen.initialize_model()
     start = time.time()
     ids = gen.read_excluded_ids()
