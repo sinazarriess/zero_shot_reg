@@ -9,14 +9,19 @@ glove_files_path = "/mnt/Data/zero_shot_reg/gloVe/"
 
 class Embeddings:
 
-    def __init__(self, modelpath):
+    def __init__(self, modelpath, use_only_names):
         self.model_initialized = False
         self.global_model_initialized = False
         self.modelpath = modelpath
+        self.use_names_only = use_only_names
 
     def init_reduced_embeddings(self):
         if not self.model_initialized:
-            self.w2v_file = get_tmpfile(self.modelpath + "tmp_word2vec.txt")
+            if self.use_names_only:
+                filepath = self.modelpath + "tmp_word2vec_only_names.txt"
+            else:
+                filepath = self.modelpath + "tmp_word2vec.txt"
+            self.w2v_file = get_tmpfile(filepath)
         self.model = KeyedVectors.load_word2vec_format(self.w2v_file)
         self.model_initialized = True
         return self.model
@@ -40,21 +45,34 @@ class Embeddings:
         with open(self.modelpath + 'additional_vocab.txt', 'r') as f:
             self.additional_words = f.read().splitlines()
 
+        self.word_that_are_names = list()
+        with open("./noun_list_long.txt", 'r') as f:
+            for row in f.readlines():
+                self.word_that_are_names.append(row.strip())
+
         complete_vocab = self.model_vocab + self.additional_words
         print complete_vocab
         print len(complete_vocab)
         print self.additional_words
 
         self.embeddings  = defaultdict()
-        for word in self.model_vocab:
-            vector = self.get_global_vector(word)
+        for word in complete_vocab:
+            if self.use_names_only:
+                if word in self.word_that_are_names:
+                    vector = self.get_global_vector(word)
+                else:
+                    vector = []
+            else:
+                vector = self.get_global_vector(word)
             if not len(vector) == 0:
                 self.embeddings[word] = vector
-            else:
-                print word
 
     def write_new_glove_file(self):
-        with open(self.modelpath + "reduced_vocab_glove.txt", "w") as f:
+        if self.use_names_only:
+            filepath = self.modelpath + "reduced_vocab_glove_only_names.txt"
+        else:
+            filepath = self.modelpath + "reduced_vocab_glove.txt"
+        with open(filepath, "w") as f:
             for vocab_word in self.embeddings:
                 f.write(vocab_word + " ")
                 for dim in self.embeddings[vocab_word]:
@@ -62,14 +80,22 @@ class Embeddings:
                 f.write("\n")
 
     def convert_glove_to_w2v(self):
-        glove_file = datapath(self.modelpath + 'reduced_vocab_glove.txt')
-        self.w2v_file = get_tmpfile(self.modelpath + 'tmp_word2vec.txt')
+        if self.use_names_only:
+            filepath = self.modelpath + "reduced_vocab_glove_only_names.txt"
+        else:
+            filepath = self.modelpath + "reduced_vocab_glove.txt"
+        glove_file = datapath(filepath)
+        if self.use_names_only:
+            filepath2 = self.modelpath + "tmp_word2vec_only_names.txt"
+        else:
+            filepath2 = self.modelpath + "tmp_word2vec.txt"
+        self.w2v_file = get_tmpfile(filepath2)
         # call glove2word2vec script
         # default way (through CLI): python -m gensim.scripts.glove2word2vec --input <glove_file> --output <w2v_file>
         glove2word2vec(glove_file, self.w2v_file)
-        self.model_initialized = True
+        #self.model_initialized = True
 
-    def generate_reduced_wv2_file(self):
+    def generate_reduced_w2v_file(self):
         self.get_global_model()
         self.embeddings_for_vocab()
         self.write_new_glove_file()
@@ -140,15 +166,17 @@ class Embeddings:
     #     return vecs
 
 if __name__ == '__main__':
-    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_bus/')
+
+    use_only_nouns = True
+    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_horse/', use_only_nouns)
     ## generate custom embeddings for a model (with reduced vocabulary)
-    #embeddings.generate_reduced_wv2_file()
+    embeddings.generate_reduced_w2v_file()
 
     start = time.time()
 
     ## initialize custom embeddings
-   # word_model = embeddings.init_reduced_embeddings()
-    word_model = embeddings.get_global_model()
+    word_model = embeddings.init_reduced_embeddings()
+    #word_model = embeddings.get_global_model()
     end = time.time()
     print (end - start)
 

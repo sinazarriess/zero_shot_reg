@@ -12,12 +12,13 @@ class Zero_Shooter:
             self.candidates = json.load(f)
         with open(modelpath + 'restoredmodel_refs_greedy.json', 'r') as f:
             self.refs = json.load(f)
-        self.word_that_are_names = list()
+        self.words_that_are_names = list()
         with open("./noun_list_long.txt", 'r') as f:
             for row in f.readlines():
-               self.word_that_are_names.append(row.strip())
+               self.words_that_are_names.append(row.strip())
         self.unigram_tagger = UnigramTagger(brown.tagged_sents())
         self.zero_shot_refs = defaultdict()
+        self.non_noun_counter = 0
 
     def get_predictions(self, region_id):
         predictions = list()
@@ -34,7 +35,7 @@ class Zero_Shooter:
             if word == cat:
                 self.bus_counter += 1
             # or return this ^-
-            if word in self.word_that_are_names:  ## always returns first instance ...
+            if word in self.words_that_are_names:  ## always returns first instance ...
                 return i
         #print predicted_words
         return -1
@@ -43,8 +44,8 @@ class Zero_Shooter:
        # tokens = word_tokenize(sentence)
         tags = self.unigram_tagger.tag(tokens)
         nouns = [x for x in tags if x[1] == 'NN']
-        if len(nouns) > 1:
-            print tokens
+       # if len(nouns) > 1:
+          #  print tokens
         if len(nouns) > 0:
             if nouns[0][0] == cat:
                 self.bus_counter += 1
@@ -62,8 +63,8 @@ class Zero_Shooter:
         hit_at_5 = 0
         hit_at_10 = 0
 
-        counter = 0
         for region_id in self.candidates:
+
             region_id = str(region_id)
             #   region_id = '167959'
             sentence = self.get_predictions(region_id)
@@ -96,14 +97,20 @@ class Zero_Shooter:
             new_words_2 = embeddings.get_words_for_vector(new_vec, 2)
             if category in [x[0] for x in new_words_2]:
                 hit_at_2 += 1
-            counter += 1
+
+            if not new_words_1[0][0] in self.words_that_are_names:
+                self.non_noun_counter += 1
+            #print self.words_that_are_names
+            #    print new_words_1[0][0]
 
             ref = self.refs[region_id][0].split()
             ref[index] = new_words_1[0][0]
             new_ref = ' '.join(ref)
             self.zero_shot_refs[region_id] = [new_ref]
 
-        return hit_at_1/ float(counter), hit_at_2/ float(counter), hit_at_5/ float(counter), hit_at_10/ float(counter), counter
+        print "non-nouns: ", self.non_noun_counter, " of ", len(self.candidates), " -> ", round(self.non_noun_counter / float(len(self.candidates))* 100, 2)
+        return hit_at_1/ float(len(self.candidates)), hit_at_2/ float(len(self.candidates)), hit_at_5/ float(len(self.candidates)), \
+               hit_at_10/ float(len(self.candidates)), len(self.candidates)
 
 
 if __name__ == '__main__':
@@ -111,6 +118,7 @@ if __name__ == '__main__':
     cats = ['laptop', 'bus', 'horse']
 
     use_reduced_vector_space = True
+    use_only_names = True
     numbr_candidates = 10
     print "Number of vectors used for combination: ", numbr_candidates
     print "Reduced model: ", use_reduced_vector_space
@@ -118,16 +126,17 @@ if __name__ == '__main__':
     for c in cats:
         model = '/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_' + c + '/'
         zs = Zero_Shooter(model, numbr_candidates)
-        embed = helper.word_embeddings.Embeddings(model)
+        embed = helper.word_embeddings.Embeddings(model, use_only_names)
         if use_reduced_vector_space:
             word_model = embed.init_reduced_embeddings()
         else:
             word_model = embed.get_global_model()
 
+       # print zs.words_that_are_names
         print "**** ", c
         results =  zs.do_zero_shot(embed, c)
         print "number of utterances to analyse: ", len(zs.candidates)
-        print "valid sentences:", results[4], ',', round(results[4]/float(len(zs.candidates)) * 100, 2), '%'
+      #  print "valid sentences:", results[4], ',', round(results[4]/float(len(zs.candidates)) * 100, 2), '%'
         print "( Number of embeddings: ", len(word_model.vocab), ")"
         chance_acc = 1 / float(len(word_model.vocab))
         print "chance: ",  round(chance_acc * 100, 4), '%'
@@ -135,7 +144,7 @@ if __name__ == '__main__':
         print "accuracy hit@2: ", round(results[1] * 100, 2) , '%'
         print "accuracy hit@5: ", round(results[2] * 100, 2) , '%'
         print "accuracy hit@10: ", round(results[3] * 100, 2) , '%'
-        print "correct hits before: ", round(zs.bus_counter / float(results[4]) * 100, 2), '%\n'
+        print "correct hits before: ", round(zs.bus_counter / float(results[4]) * 100, 2), '%\n' #TODO counter changed
 
         with open(model + 'zero_shot_refs_'+ str(c) + '.json', 'w') as f:
             json.dump(zs.zero_shot_refs, f)
