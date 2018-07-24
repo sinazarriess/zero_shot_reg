@@ -44,7 +44,7 @@ def display_closestwords_tsnescatterplot_compare(model, complete_model, word):
     words_in_small_embed = [word]
 
     # get close words
-    close_words = complete_model.similar_by_word(word, 50)
+    close_words = complete_model.similar_by_word(word, 25)
     for w in close_words:
         if w[0] in model.vocab:
             words_in_small_embed.append(w[0])
@@ -84,8 +84,8 @@ def display_closestwords_tsnescatterplot_compare(model, complete_model, word):
 
 
 if __name__ == "__main__":
-    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_bus/', True)
-  #  global_model = embeddings.get_global_model()
+    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_laptop/', True)
+    #global_model = embeddings.get_global_model()
     word_model = embeddings.init_reduced_embeddings()
-    display_closestwords_tsnescatterplot(word_model, 'bus')
+    display_closestwords_tsnescatterplot(word_model, 'laptop')
     #print  word_model.similar_by_word('horse', 50)

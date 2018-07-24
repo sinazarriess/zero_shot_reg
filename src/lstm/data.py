@@ -8,9 +8,10 @@ import ast
 
 class Data:
 
-    def __init__(self, words_excluded= [], cats_excluded = [], additional_words = [],imgfeatpath="../data/refcoco/mscoco_vgg19_refcoco.npz",
-                 refspath="../data/refcoco/refcoco_refdf.json.gz", splitpath="../data/refcoco/refcoco_splits.json"):
+    def __init__(self, res_dir, words_excluded= [], cats_excluded = [], additional_words = [], imgfeatpath = "../data/refcoco/mscoco_vgg19_refcoco.npz",
+                 refspath = "../data/refcoco/refcoco_refdf.json.gz", splitpath = "../data/refcoco/refcoco_splits.json"):
 
+        self.results_data_dir = res_dir
         self.imgfeatures_path = imgfeatpath
         self.refs_path = refspath
         self.split_path = splitpath
@@ -25,9 +26,9 @@ class Data:
         self.clean_vocab()
         self.prepare_training()
 
-        with open(p.results_data_dir + '/words_too_rare.json', 'w') as f:
+        with open(self.results_data_dir + '/words_too_rare.json', 'w') as f:
             json.dump(self.discarded_words, f)
-        with open(p.results_data_dir + '/refs_moved_to_test.json', 'w') as f:
+        with open(self.results_data_dir + '/refs_moved_to_test.json', 'w') as f:
             json.dump(self.refs_moved_to_test, f)
 
 
@@ -110,12 +111,15 @@ class Data:
                     self.raw_dataset[split]['filenames'].append(filename)
                     self.raw_dataset[split]['images'].append(image)
                     self.raw_dataset[split]['captions'].append(caption_group)
+                    for ref in caption_group:
+                        if 'laptop' in ref:
+                            print filename
                 else:
                     self.raw_dataset['test']['filenames'].append(filename)
                     self.raw_dataset['test']['images'].append(image)
                     self.raw_dataset['test']['captions'].append(caption_group)
                     self.refs_moved_to_test.append(str(obj2phrases_item[1]))
-                    print filename
+
 
         print 'raw data set', len(self.raw_dataset['train']['captions'])  # 42279
 
@@ -143,7 +147,7 @@ class Data:
         token_freqs = collections.Counter(all_tokens)
         self.vocab = sorted(token_freqs.keys(), key=lambda token: (-token_freqs[token], token))
 
-        with open(p.results_data_dir + '/token_freqs.json', 'w') as f:
+        with open(self.results_data_dir + '/token_freqs.json', 'w') as f:
             json.dump(token_freqs , f)
 
         print "all tokens count: ", len(self.vocab)

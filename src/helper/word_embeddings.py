@@ -4,6 +4,7 @@ from gensim.scripts.glove2word2vec import glove2word2vec
 from collections import defaultdict
 import numpy as np
 import time
+import csv
 
 glove_files_path = "/mnt/Data/zero_shot_reg/gloVe/"
 
@@ -109,25 +110,28 @@ class Embeddings:
             print "global model not initialized (1)"
         return []
 
-    def get_vector_for_word(self, word):
-        if self.model_initialized:
-            if word in self.model.vocab:
-                return self.model[word]
-        elif self.global_model_initialized:
-            if word in self.global_model.vocab:
-                return self.global_model[word]
+    def get_vector_for_word(self, word, from_small_model):
+        if from_small_model:
+            if self.model_initialized:
+                if word in self.model.vocab:
+                 return self.model[word]
         else:
-            print "model not initialized (2) "
+            if self.global_model_initialized:
+                if word in self.global_model.vocab:
+                    return self.global_model[word]
         return []
 
-    def get_words_for_vector(self, vec, n):
-        if self.model_initialized:
-            return self.model.similar_by_vector(vec, topn=n)
-        elif self.global_model_initialized:                             #todo clean up class
-            return self.global_model.similar_by_vector(vec, topn=n)
+    def get_words_for_vector(self, vec, n, from_small_model):
+
+        if from_small_model:
+            if self.model_initialized:
+                return self.model.similar_by_vector(vec, topn=n)
         else:
-            print "model not initialized (3)"
+            if self.global_model_initialized:
+                return self.global_model.similar_by_vector(vec, topn=n)
+
         return ""
+
 
     def get_mean_vec(self, vecs):
         self.get_words_for_vector()
@@ -137,13 +141,13 @@ class Embeddings:
         vecs = np.array(new_vec)
         return new_vec
 
-    def words2embedding_weighted(self, predictions, word_probs):
+    def words2embedding_weighted(self, predictions, word_probs, from_small_model):
         vectors = list()
         probs = list()
         valid_words_counter = 0
         for word in predictions:
             if not (word == 'EDGE' or word == 'UNKNOWN'):
-                vec = self.get_vector_for_word(word)
+                vec = self.get_vector_for_word(word, from_small_model)
                 if len(vec) > 0:
                     vectors.append(vec)
                     probs.append(predictions.index(word))
@@ -164,6 +168,7 @@ class Embeddings:
     #     vecs = np.array(vecs)
     #     # print "Embedding matrix",vecs.shape
     #     return vecs
+
 
 if __name__ == '__main__':
 

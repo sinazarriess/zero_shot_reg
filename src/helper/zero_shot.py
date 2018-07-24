@@ -57,7 +57,7 @@ class Zero_Shooter:
             else:
                 return -1
 
-    def do_zero_shot(self, embeddings, category):
+    def do_zero_shot(self, embeddings, category, use_reduced_vector_space):
         hit_at_1 = 0
         hit_at_2 = 0
         hit_at_5 = 0
@@ -84,17 +84,17 @@ class Zero_Shooter:
             cand_words = [x[0] for x in candidate_words_and_probs]
             cand_probs = [float(x[1]) for x in candidate_words_and_probs]
 
-            new_vec = embeddings.words2embedding_weighted(cand_words, cand_probs)
-            new_words_10 = embeddings.get_words_for_vector(new_vec, 10)
-            new_words_5 = embeddings.get_words_for_vector(new_vec, 5)
+            new_vec = embeddings.words2embedding_weighted(cand_words, cand_probs, use_reduced_vector_space)
+            new_words_10 = embeddings.get_words_for_vector(new_vec, 10, use_reduced_vector_space)
+            new_words_5 = embeddings.get_words_for_vector(new_vec, 5, use_reduced_vector_space)
             if category in [x[0] for x in new_words_10]:
                 hit_at_10 += 1
             if category in [x[0] for x in new_words_5]:
                 hit_at_5 += 1
-            new_words_1 = embeddings.get_words_for_vector(new_vec, 1)
+            new_words_1 = embeddings.get_words_for_vector(new_vec, 1, use_reduced_vector_space)
             if category in [x[0] for x in new_words_1]:
                 hit_at_1 += 1
-            new_words_2 = embeddings.get_words_for_vector(new_vec, 2)
+            new_words_2 = embeddings.get_words_for_vector(new_vec, 2, use_reduced_vector_space)
             if category in [x[0] for x in new_words_2]:
                 hit_at_2 += 1
 
@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
     cats = ['laptop', 'bus', 'horse']
 
-    use_reduced_vector_space = True
+    use_reduced_vector_space = False
     use_only_names = True
     numbr_candidates = 10
     print "Number of vectors used for combination: ", numbr_candidates
@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
        # print zs.words_that_are_names
         print "**** ", c
-        results =  zs.do_zero_shot(embed, c)
+        results =  zs.do_zero_shot(embed, c, use_reduced_vector_space)
         print "number of utterances to analyse: ", len(zs.candidates)
       #  print "valid sentences:", results[4], ',', round(results[4]/float(len(zs.candidates)) * 100, 2), '%'
         print "( Number of embeddings: ", len(word_model.vocab), ")"
