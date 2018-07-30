@@ -10,7 +10,7 @@ class Zero_Shooter:
         self.bus_counter = 0
         with open(modelpath + 'all_highest_probs_'+ str(candidates) + '.json', 'r') as f:
             self.candidates = json.load(f)
-        with open(modelpath + 'restoredmodel_refs_greedy.json', 'r') as f:
+        with open(modelpath + 'inject_refcoco_refrnn_compositional_3_512_1/4eval_greedy.json', 'r') as f:
             self.refs = json.load(f)
         self.words_that_are_names = list()
         with open("./noun_list_long.txt", 'r') as f:
@@ -37,7 +37,6 @@ class Zero_Shooter:
             # or return this ^-
             if word in self.words_that_are_names:  ## always returns first instance ...
                 return i
-        #print predicted_words
         return -1
 
     def parse_pos(self, tokens, cat):
@@ -58,6 +57,7 @@ class Zero_Shooter:
                 return -1
 
     def do_zero_shot(self, embeddings, category, use_reduced_vector_space):
+        category = str(category)
         hit_at_1 = 0
         hit_at_2 = 0
         hit_at_5 = 0
@@ -74,6 +74,7 @@ class Zero_Shooter:
 
             ## OR use name list
             index = self.parse_for_names(sentence, category)
+            print sentence
 
             if index < 0:
            #     print sentence
@@ -85,28 +86,31 @@ class Zero_Shooter:
             cand_probs = [float(x[1]) for x in candidate_words_and_probs]
 
             new_vec = embeddings.words2embedding_weighted(cand_words, cand_probs, use_reduced_vector_space)
-            new_words_10 = embeddings.get_words_for_vector(new_vec, 10, use_reduced_vector_space)
-            new_words_5 = embeddings.get_words_for_vector(new_vec, 5, use_reduced_vector_space)
-            if category in [x[0] for x in new_words_10]:
-                hit_at_10 += 1
-            if category in [x[0] for x in new_words_5]:
-                hit_at_5 += 1
-            new_words_1 = embeddings.get_words_for_vector(new_vec, 1, use_reduced_vector_space)
-            if category in [x[0] for x in new_words_1]:
-                hit_at_1 += 1
-            new_words_2 = embeddings.get_words_for_vector(new_vec, 2, use_reduced_vector_space)
-            if category in [x[0] for x in new_words_2]:
-                hit_at_2 += 1
+            if new_vec is not None:                                                                         #TODO counter oder so aendern?
+                new_words_10 = embeddings.get_words_for_vector(new_vec, 10, use_reduced_vector_space)
+                new_words_5 = embeddings.get_words_for_vector(new_vec, 5, use_reduced_vector_space)
+                new_words_2 = embeddings.get_words_for_vector(new_vec, 2, use_reduced_vector_space)
+                new_words_1 = embeddings.get_words_for_vector(new_vec, 1, use_reduced_vector_space)
 
-            if not new_words_1[0][0] in self.words_that_are_names:
-                self.non_noun_counter += 1
-            #print self.words_that_are_names
-            #    print new_words_1[0][0]
+                if category in [x[0] for x in new_words_10]:
+                    hit_at_10 += 1
+                if category in [x[0] for x in new_words_5]:
+                    hit_at_5 += 1
+                if category in [x[0] for x in new_words_1]:
+                    hit_at_1 += 1
+                if category in [x[0] for x in new_words_2]:
+                    hit_at_2 += 1
 
-            ref = self.refs[region_id][0].split()
-            ref[index] = new_words_1[0][0]
-            new_ref = ' '.join(ref)
-            self.zero_shot_refs[region_id] = [new_ref]
+                if not new_words_1[0][0] in self.words_that_are_names:
+                    self.non_noun_counter += 1
+                #print self.words_that_are_names
+                #    print new_words_1[0][0]
+
+                ref = self.refs[region_id][0].split()
+                print ref
+                ref[index] = new_words_1[0][0]
+                new_ref = ' '.join(ref)
+                self.zero_shot_refs[region_id] = [new_ref]
 
         print "non-nouns: ", self.non_noun_counter, " of ", len(self.candidates), " -> ", round(self.non_noun_counter / float(len(self.candidates))* 100, 2)
         return hit_at_1/ float(len(self.candidates)), hit_at_2/ float(len(self.candidates)), hit_at_5/ float(len(self.candidates)), \

@@ -31,6 +31,8 @@ class Data:
         with open(self.results_data_dir + '/refs_moved_to_test.json', 'w') as f:
             json.dump(self.refs_moved_to_test, f)
 
+        if len(self.refs_moved_to_test) == 0:
+            print "category not in training set"
 
     def load_data(self):
         ############ load and prepare image features ###########################
@@ -111,9 +113,9 @@ class Data:
                     self.raw_dataset[split]['filenames'].append(filename)
                     self.raw_dataset[split]['images'].append(image)
                     self.raw_dataset[split]['captions'].append(caption_group)
-                    for ref in caption_group:
-                        if 'laptop' in ref:
-                            print filename
+                    #for ref in caption_group:
+                      #  if 'laptop' in ref:
+                        #    print filename
                 else:
                     self.raw_dataset['test']['filenames'].append(filename)
                     self.raw_dataset['test']['images'].append(image)
@@ -124,19 +126,18 @@ class Data:
         print 'raw data set', len(self.raw_dataset['train']['captions'])  # 42279
 
         ''''' todo remove'''
-        print(len(self.raw_dataset['train']['images']) + len(self.raw_dataset['val']['images']) + \
-              len(self.raw_dataset['test']['images']))  # should be 49865
+      #  print(len(self.raw_dataset['train']['images']) + len(self.raw_dataset['val']['images']) + \
+       #       len(self.raw_dataset['test']['images']))  # should be 49865
 
-        print(self.raw_dataset['train']['captions'][
-            0])  # output : [[u'hidden', u'chocolate', u'donut'], [u'space', u'right', u'above', u'game']]
-        print(self.raw_dataset['train']['captions'][111])  # output : [[u'groom'], [u'groom'], [u'man']]
+      #  print(self.raw_dataset['train']['captions'][0])  # output : [[u'hidden', u'chocolate', u'donut'], [u'space', u'right', u'above', u'game']]
+      #  print(self.raw_dataset['train']['captions'][111])  # output : [[u'groom'], [u'groom'], [u'man']]
 
         # to compare with original scripts: here, the order is like
         # in im_mat from prepare_refcoco.py.
-        print("count", test_count)  # 49865
-        test_list = np.array(test_list)
-        print(test_list.shape)
-        print("test:: ", test_list[1][0])  # 0.0729042887688 --> like in original script (random number chosen)
+     #   print("count", test_count)  # 49865
+     #   test_list = np.array(test_list)
+      #  print(test_list.shape)
+      #  print("test:: ", test_list[1][0])  # 0.0729042887688 --> like in original script (random number chosen)
 
     def clean_vocab(self):
         ################################################################
@@ -165,11 +166,6 @@ class Data:
         for (caption_group, img) in zip(data['captions'], data['images']):
             for caption in caption_group:
                 indexes_ = [self.token_to_index.get(token, self.unknown_index) for token in caption]
-
-          #      for token in caption:
-          #          if token not in self.token_to_index.keys():
-          #              print token
-
                 indexes.append(indexes_)
                 lens.append(len(indexes_) + 1)  # add 1 due to edge token
                 images.append(img)
@@ -188,9 +184,7 @@ class Data:
         self.token_to_index = {token: i + 2 for (i, token) in enumerate(self.vocab)}
         self.index_to_token = {i + 2: token for (i, token) in enumerate(self.vocab)}
 
-        # keep unknown tokens
         self.index_to_token[1] = "UNKNOWN"
-
         self.edge_index = 0
         self.unknown_index = 1
 

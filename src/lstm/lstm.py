@@ -25,7 +25,7 @@ class LSTM():
         self.captions_greedy = list()
         self.alternatives_dict = defaultdict()
 
-        print('\n-' * 100)
+        print('\n-' * 2)
         print(p.dataset, p.min_token_freq, p.layer_size, self.method, run, '\n')
 
     def final_prediction(self, tensor):
@@ -144,12 +144,11 @@ class LSTM():
         self.new_index2token[p.edge_index] = "EDGE"
 
         for (i, item) in enumerate(raw_dataset['test']['filenames']):
-            self.oids.append(int(item.split("_")[1]))
-        print "*************************************\n", self.oids
-        print "*************************************\n", self.excluded_ids
+            self.oids.append(int(item.split("_")[1])) ## int??
+      #  print "*************************************\n", self.oids
+     #   print "*************************************\n", self.excluded_ids
         average_utterance_length = 0
         utterance_counter = 0
-
 
         for (i, image_input) in enumerate(raw_dataset['test']['images']):
             if self.oids[i] in self.excluded_ids:

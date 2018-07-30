@@ -44,7 +44,7 @@ class Embeddings:
         with open(self.modelpath + 'vocab_list.txt', 'r') as f:
             self.model_vocab = f.read().splitlines()
         with open(self.modelpath + 'additional_vocab.txt', 'r') as f:
-            self.additional_words = f.read().splitlines()
+            self.additional_words = [x.strip() for x in f.read().splitlines()]
 
         self.word_that_are_names = list()
         with open("./noun_list_long.txt", 'r') as f:
@@ -156,6 +156,7 @@ class Embeddings:
             new_vec = np.sum([vectors[x].astype(float) * word_probs[x] for x in range(valid_words_counter)], axis=0)
             vecs = np.array(new_vec)
             return new_vec
+        print 'no valid predictions for combination found'
         return None
 
     # def words2embedding_weighted(self, word_predictions, word_probs, word_vectors):
