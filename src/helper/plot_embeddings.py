@@ -84,8 +84,9 @@ def display_closestwords_tsnescatterplot_compare(model, complete_model, word):
 
 
 if __name__ == "__main__":
-    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_laptop/', True)
-    #global_model = embeddings.get_global_model()
-    word_model = embeddings.init_reduced_embeddings()
-    display_closestwords_tsnescatterplot(word_model, 'laptop')
+    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_40/', True)
+    global_model = embeddings.get_global_model()
+    #word_model = embeddings.init_reduced_embeddings()
+    #display_closestwords_tsnescatterplot(word_model, 'baseball glove')
+    print global_model.similar_by_word("wine_glass", 3)
     #print  word_model.similar_by_word('horse', 50)

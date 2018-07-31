@@ -32,7 +32,7 @@ class Zero_Shooter:
 
     def parse_for_names(self, predicted_words, cat):   #TODO "man on horse"  ... POS tagging?
         for i, word in enumerate(predicted_words):
-            if word == cat:
+            if word == str(cat):
                 self.bus_counter += 1
             # or return this ^-
             if word in self.words_that_are_names:  ## always returns first instance ...
@@ -74,7 +74,7 @@ class Zero_Shooter:
 
             ## OR use name list
             index = self.parse_for_names(sentence, category)
-            print sentence
+            #print sentence
 
             if index < 0:
            #     print sentence
@@ -107,7 +107,7 @@ class Zero_Shooter:
                 #    print new_words_1[0][0]
 
                 ref = self.refs[region_id][0].split()
-                print ref
+                #print ref
                 ref[index] = new_words_1[0][0]
                 new_ref = ' '.join(ref)
                 self.zero_shot_refs[region_id] = [new_ref]
@@ -127,10 +127,13 @@ if __name__ == '__main__':
     print "Number of vectors used for combination: ", numbr_candidates
     print "Reduced model: ", use_reduced_vector_space
 
+
     for c in cats:
         model = '/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_' + c + '/'
         zs = Zero_Shooter(model, numbr_candidates)
         embed = helper.word_embeddings.Embeddings(model, use_only_names)
+
+
         if use_reduced_vector_space:
             word_model = embed.init_reduced_embeddings()
         else:
@@ -148,7 +151,7 @@ if __name__ == '__main__':
         print "accuracy hit@2: ", round(results[1] * 100, 2) , '%'
         print "accuracy hit@5: ", round(results[2] * 100, 2) , '%'
         print "accuracy hit@10: ", round(results[3] * 100, 2) , '%'
-        print "correct hits before: ", round(zs.bus_counter / float(results[4]) * 100, 2), '%\n' #TODO counter changed
+        print "correct hits before: ", round(zs.bus_counter / float(results[4]) * 100, 2), '%\n'
 
         with open(model + 'zero_shot_refs_'+ str(c) + '.json', 'w') as f:
             json.dump(zs.zero_shot_refs, f)

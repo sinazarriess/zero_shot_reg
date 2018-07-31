@@ -80,30 +80,30 @@ if __name__ == '__main__':
     for row in reader:
         categories[row[0].strip()] = row[1:]
 
+
     for key in categories.keys():
-        if not (key == '62' or key == '56'):
-            print "******** Train model without:", categories[key][0].strip()
-            cat_ids = parse_categories([key])
+        print "******** Train model without:", categories[key][0].strip()
+        cat_ids = parse_categories([key])
 
-            if len(cat_ids) == 0:
-                continue
-            words = [categories[key][0].strip()]
-            #print cat_ids, words
-            results_data_dir = '/media/compute/vol/dsg/lilian/exp/with_reduced_cats_' + key
-            #if not os.path.exists(results_data_dir + '/inject_refcoco_refrnn_compositional_3_512_1'):
+        if len(cat_ids) == 0:
+            continue
+        words = [categories[key][0].strip()]
+        #print cat_ids, words
+        results_data_dir = '/media/compute/vol/dsg/lilian/exp/with_reduced_cats_' + key
+        #if not os.path.exists(results_data_dir + '/inject_refcoco_refrnn_compositional_3_512_1'):
 
-            data_interface = data.Data(results_data_dir, [], cat_ids, words)
-            if len(data_interface.refs_moved_to_test) > 0:  # if category is in training set!
-                print data_interface.vocab_size
-                training = train.Learn(results_data_dir)
-                for run in range(1, params.num_runs + 1):
-                    model = lstm.LSTM(run, data_interface.vocab_size, results_data_dir, cat_ids, data_interface.index_to_token)
-                    model.build_network()
-                    training.run_training(model, data_interface)
+        data_interface = data.Data(results_data_dir, [], cat_ids, words)
+        if len(data_interface.refs_moved_to_test) > 0:  # if category is in training set!
+            print data_interface.vocab_size
+            training = train.Learn(results_data_dir)
+            for run in range(1, params.num_runs + 1):
+                model = lstm.LSTM(run, data_interface.vocab_size, results_data_dir, cat_ids, data_interface.index_to_token)
+                model.build_network()
+                training.run_training(model, data_interface)
 
-                generate_indextotoken(data_interface, results_data_dir, words)
-            else:
-                print "was not trained: ", key
+            generate_indextotoken(data_interface, results_data_dir, words)
+        else:
+            print "was not trained: ", key
            # else:
               #  print "was already trained: ", key
     #

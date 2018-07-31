@@ -1,0 +1,247 @@
+2018-07-31 16:33:49.276771: I tensorflow/core/platform/cpu_feature_guard.cc:140] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 FMA
+2018-07-31 16:33:49.740698: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1356] Found device 0 with properties: 
+name: GeForce GTX 1080 Ti major: 6 minor: 1 memoryClockRate(GHz): 1.582
+pciBusID: 0000:03:00.0
+totalMemory: 10.91GiB freeMemory: 10.75GiB
+2018-07-31 16:33:49.740753: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0
+2018-07-31 16:33:54.770582: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-07-31 16:33:54.770645: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 
+2018-07-31 16:33:54.770654: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N 
+2018-07-31 16:33:54.771068: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10407 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080 Ti, pci bus id: 0000:03:00.0, compute capability: 6.1)
+2018-07-31 16:39:06.690387: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0
+2018-07-31 16:39:06.690462: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-07-31 16:39:06.690469: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 
+2018-07-31 16:39:06.690473: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N 
+2018-07-31 16:39:06.690638: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10407 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080 Ti, pci bus id: 0000:03:00.0, compute capability: 6.1)
+******** Train model without: tie
+array([    0, 62920,  1216,  5337,  1988,   420,  1154,   591,  1460,
+        1421,  1133,   112,     0,   105,   247,  1705,   919,   674,
+         865,  1276,  1644,  1573,  1715,   251,  1571,  1307,     0,
+        1924,  2359,     0,     0,  3179,  2415,  1743,   508,  1106,
+         398,  1369,   552,   994,  1058,   729,   462,  1065,  5904,
+           0,  3488,  6952,  2034,  2320,  1940,  4563,  2819,  1511,
+        1632,  1857,  1949,  1721,   889,  2204,  2216,  2360, 10234,
+        1874,  1765,   756,     0,  5029,     0,     0,   442,     0,
+        1362,  1303,   410,  2345,   605,  1970,   222,   491,    18,
+         423,   445,     0,  4858,   693,  1425,   262,  1610,    28,
+         377])
+mean freq of cats:  2162.31868132
+raw data set 42232
+all tokens count:  9336
+('vocab:', 2967)
+('Train captions', (120137, 40))
+2967
+
+-
+-
+('refcoco_refrnn_compositional', 3, 512, 'inject', 1, '\n')
+('embedded shape: ', TensorShape([Dimension(None), Dimension(None), Dimension(512)]))
+epoch	 val loss	 duration	
+1 	 141066.417 	 48.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_32/inject_refcoco_refrnn_compositional_3_512_1/model
+2 	 136604.688 	 96.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_32/inject_refcoco_refrnn_compositional_3_512_1/model
+3 	 135602.39 	 144.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_32/inject_refcoco_refrnn_compositional_3_512_1/model
+4 	 135293.095 	 193.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_32/inject_refcoco_refrnn_compositional_3_512_1/model
+5 	 136934.719 	 241.0
+
+Duration: 242.0 s
+
+Average utterance length greedy:  2.67796610169
+
+ wrote new json
+
+******** Train model without: carrot
+array([    0, 62920,  1216,  5337,  1988,   420,  1154,   591,  1460,
+        1421,  1133,   112,     0,   105,   247,  1705,   919,   674,
+         865,  1276,  1644,  1573,  1715,   251,  1571,  1307,     0,
+        1924,  2359,     0,     0,  3179,  2415,  1743,   508,  1106,
+         398,  1369,   552,   994,  1058,   729,   462,  1065,  5904,
+           0,  3488,  6952,  2034,  2320,  1940,  4563,  2819,  1511,
+        1632,  1857,  1949,  1721,   889,  2204,  2216,  2360, 10234,
+        1874,  1765,   756,     0,  5029,     0,     0,   442,     0,
+        1362,  1303,   410,  2345,   605,  1970,   222,   491,    18,
+         423,   445,     0,  4858,   693,  1425,   262,  1610,    28,
+         377])
+mean freq of cats:  2162.31868132
+raw data set 42171
+all tokens count:  9325
+('vocab:', 2962)
+('Train captions', (119969, 40))
+2962
+
+-
+-
+('refcoco_refrnn_compositional', 3, 512, 'inject', 1, '\n')
+('embedded shape: ', TensorShape([Dimension(None), Dimension(None), Dimension(512)]))
+epoch	 val loss	 duration	
+1 	 141035.012 	 47.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_57/inject_refcoco_refrnn_compositional_3_512_1/model
+2 	 136574.611 	 95.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_57/inject_refcoco_refrnn_compositional_3_512_1/model
+3 	 135250.739 	 144.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_57/inject_refcoco_refrnn_compositional_3_512_1/model
+4 	 135467.396 	 192.0
+
+Duration: 193.0 s
+
+Average utterance length greedy:  2.9347826087
+
+ wrote new json
+
+******** Train model without: teddy bear
+array([    0, 62920,  1216,  5337,  1988,   420,  1154,   591,  1460,
+        1421,  1133,   112,     0,   105,   247,  1705,   919,   674,
+         865,  1276,  1644,  1573,  1715,   251,  1571,  1307,     0,
+        1924,  2359,     0,     0,  3179,  2415,  1743,   508,  1106,
+         398,  1369,   552,   994,  1058,   729,   462,  1065,  5904,
+           0,  3488,  6952,  2034,  2320,  1940,  4563,  2819,  1511,
+        1632,  1857,  1949,  1721,   889,  2204,  2216,  2360, 10234,
+        1874,  1765,   756,     0,  5029,     0,     0,   442,     0,
+        1362,  1303,   410,  2345,   605,  1970,   222,   491,    18,
+         423,   445,     0,  4858,   693,  1425,   262,  1610,    28,
+         377])
+mean freq of cats:  2162.31868132
+2018-07-31 16:43:36.371571: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0
+2018-07-31 16:43:36.371648: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-07-31 16:43:36.371656: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 
+2018-07-31 16:43:36.371660: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N 
+2018-07-31 16:43:36.371839: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10407 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080 Ti, pci bus id: 0000:03:00.0, compute capability: 6.1)
+2018-07-31 16:50:30.197372: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0
+2018-07-31 16:50:30.197451: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-07-31 16:50:30.197458: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 
+2018-07-31 16:50:30.197462: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N 
+2018-07-31 16:50:30.197644: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10407 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080 Ti, pci bus id: 0000:03:00.0, compute capability: 6.1)
+raw data set 41673
+all tokens count:  9273
+('vocab:', 2949)
+('Train captions', (118559, 40))
+2949
+
+-
+-
+('refcoco_refrnn_compositional', 3, 512, 'inject', 1, '\n')
+('embedded shape: ', TensorShape([Dimension(None), Dimension(None), Dimension(512)]))
+epoch	 val loss	 duration	
+1 	 139563.05 	 48.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_88/inject_refcoco_refrnn_compositional_3_512_1/model
+2 	 135152.675 	 96.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_88/inject_refcoco_refrnn_compositional_3_512_1/model
+3 	 134345.006 	 143.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_88/inject_refcoco_refrnn_compositional_3_512_1/model
+4 	 133514.761 	 191.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_88/inject_refcoco_refrnn_compositional_3_512_1/model
+5 	 134654.418 	 239.0
+
+Duration: 240.0 s
+
+Average utterance length greedy:  2.33099579243
+
+ wrote new json
+
+******** Train model without: hair drier
+array([    0, 62920,  1216,  5337,  1988,   420,  1154,   591,  1460,
+        1421,  1133,   112,     0,   105,   247,  1705,   919,   674,
+         865,  1276,  1644,  1573,  1715,   251,  1571,  1307,     0,
+        1924,  2359,     0,     0,  3179,  2415,  1743,   508,  1106,
+         398,  1369,   552,   994,  1058,   729,   462,  1065,  5904,
+           0,  3488,  6952,  2034,  2320,  1940,  4563,  2819,  1511,
+        1632,  1857,  1949,  1721,   889,  2204,  2216,  2360, 10234,
+        1874,  1765,   756,     0,  5029,     0,     0,   442,     0,
+        1362,  1303,   410,  2345,   605,  1970,   222,   491,    18,
+         423,   445,     0,  4858,   693,  1425,   262,  1610,    28,
+         377])
+mean freq of cats:  2162.31868132
+raw data set 42279
+all tokens count:  9350
+('vocab:', 2967)
+('Train captions', (120266, 40))
+category not in training set
+was not trained:  89
+******** Train model without: bed
+array([    0, 62920,  1216,  5337,  1988,   420,  1154,   591,  1460,
+        1421,  1133,   112,     0,   105,   247,  1705,   919,   674,
+         865,  1276,  1644,  1573,  1715,   251,  1571,  1307,     0,
+        1924,  2359,     0,     0,  3179,  2415,  1743,   508,  1106,
+         398,  1369,   552,   994,  1058,   729,   462,  1065,  5904,
+           0,  3488,  6952,  2034,  2320,  1940,  4563,  2819,  1511,
+        1632,  1857,  1949,  1721,   889,  2204,  2216,  2360, 10234,
+        1874,  1765,   756,     0,  5029,     0,     0,   442,     0,
+        1362,  1303,   410,  2345,   605,  1970,   222,   491,    18,
+         423,   445,     0,  4858,   693,  1425,   262,  1610,    28,
+         377])
+mean freq of cats:  2162.31868132
+raw data set 42009
+all tokens count:  9310
+('vocab:', 2955)
+('Train captions', (119509, 40))
+2955
+
+-
+-
+('refcoco_refrnn_compositional', 3, 512, 'inject', 1, '\n')
+('embedded shape: ', TensorShape([Dimension(None), Dimension(None), Dimension(512)]))
+epoch	 val loss	 duration	
+1 	 140101.467 	 48.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_65/inject_refcoco_refrnn_compositional_3_512_1/model
+2 	 136128.337 	 96.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_65/inject_refcoco_refrnn_compositional_3_512_1/model
+3 	 135248.172 	 144.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_65/inject_refcoco_refrnn_compositional_3_512_1/model
+4 	 134841.308 	 192.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_65/inject_refcoco_refrnn_compositional_3_512_1/model
+5 	 136031.372 	 241.0
+
+Duration: 241.0 s
+
+Average utterance length greedy:  2.52380952381
+
+ wrote new json
+
+******** Train model without: toothbrush
+array([    0, 62920,  1216,  5337,  1988,   420,  1154,   591,  1460,
+        1421,  1133,   112,     0,   105,   247,  1705,   919,   674,
+         865,  1276,  1644,  1573,  1715,   251,  1571,  1307,     0,
+        1924,  2359,     0,     0,  3179,  2415,  1743,   508,  1106,
+         398,  1369,   552,   994,  1058,   729,   462,  1065,  5904,
+           0,  3488,  6952,  2034,  2320,  1940,  4563,  2819,  1511,
+        1632,  1857,  1949,  1721,   889, 2018-07-31 16:56:00.674453: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1435] Adding visible gpu devices: 0
+2018-07-31 16:56:00.674527: I tensorflow/core/common_runtime/gpu/gpu_device.cc:923] Device interconnect StreamExecutor with strength 1 edge matrix:
+2018-07-31 16:56:00.674535: I tensorflow/core/common_runtime/gpu/gpu_device.cc:929]      0 
+2018-07-31 16:56:00.674540: I tensorflow/core/common_runtime/gpu/gpu_device.cc:942] 0:   N 
+2018-07-31 16:56:00.674701: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1053] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 10407 MB memory) -> physical GPU (device: 0, name: GeForce GTX 1080 Ti, pci bus id: 0000:03:00.0, compute capability: 6.1)
+ 2204,  2216,  2360, 10234,
+        1874,  1765,   756,     0,  5029,     0,     0,   442,     0,
+        1362,  1303,   410,  2345,   605,  1970,   222,   491,    18,
+         423,   445,     0,  4858,   693,  1425,   262,  1610,    28,
+         377])
+mean freq of cats:  2162.31868132
+raw data set 42229
+all tokens count:  9344
+('vocab:', 2966)
+('Train captions', (120122, 40))
+2966
+
+-
+-
+('refcoco_refrnn_compositional', 3, 512, 'inject', 1, '\n')
+('embedded shape: ', TensorShape([Dimension(None), Dimension(None), Dimension(512)]))
+epoch	 val loss	 duration	
+1 	 141735.172 	 48.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_90/inject_refcoco_refrnn_compositional_3_512_1/model
+2 	 136818.299 	 96.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_90/inject_refcoco_refrnn_compositional_3_512_1/model
+3 	 135836.201 	 144.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_90/inject_refcoco_refrnn_compositional_3_512_1/model
+4 	 135557.476 	 193.0
+save model /media/compute/vol/dsg/lilian/exp/with_reduced_cats_90/inject_refcoco_refrnn_compositional_3_512_1/model
+5 	 136553.98 	 241.0
+
+Duration: 242.0 s
+
+Average utterance length greedy:  2.61111111111
+
+ wrote new json
+
