@@ -479,3 +479,9 @@ kid
 pillar
 pile
 bike
+refrigerator
+oven
+kite
+cat
+handbag
+skis

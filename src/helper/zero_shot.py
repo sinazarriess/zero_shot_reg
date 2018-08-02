@@ -57,6 +57,8 @@ class Zero_Shooter:
                 return -1
 
     def do_zero_shot(self, embeddings, category, use_reduced_vector_space):
+        self.word_changed_counter = 0
+        self.zero_shot_counter = 0
         category = str(category)
         hit_at_1 = 0
         hit_at_2 = 0
@@ -66,7 +68,6 @@ class Zero_Shooter:
         for region_id in self.candidates:
 
             region_id = str(region_id)
-            #   region_id = '167959'
             sentence = self.get_predictions(region_id)
 
             ## use pos tagger
@@ -74,10 +75,8 @@ class Zero_Shooter:
 
             ## OR use name list
             index = self.parse_for_names(sentence, category)
-            #print sentence
 
             if index < 0:
-           #     print sentence
                 self.zero_shot_refs[region_id] = self.refs[region_id]
                 continue
 
@@ -86,7 +85,7 @@ class Zero_Shooter:
             cand_probs = [float(x[1]) for x in candidate_words_and_probs]
 
             new_vec = embeddings.words2embedding_weighted(cand_words, cand_probs, use_reduced_vector_space)
-            if new_vec is not None:                                                                         #TODO counter oder so aendern?
+            if new_vec is not None:
                 new_words_10 = embeddings.get_words_for_vector(new_vec, 10, use_reduced_vector_space)
                 new_words_5 = embeddings.get_words_for_vector(new_vec, 5, use_reduced_vector_space)
                 new_words_2 = embeddings.get_words_for_vector(new_vec, 2, use_reduced_vector_space)
@@ -108,28 +107,67 @@ class Zero_Shooter:
 
                 ref = self.refs[region_id][0].split()
                 #print ref
+
+                self.zero_shot_counter += 1
+                if not new_words_1[0][0] == ref[index]:
+                    self.word_changed_counter += 1
+
                 ref[index] = new_words_1[0][0]
                 new_ref = ' '.join(ref)
                 self.zero_shot_refs[region_id] = [new_ref]
+
 
         print "non-nouns: ", self.non_noun_counter, " of ", len(self.candidates), " -> ", round(self.non_noun_counter / float(len(self.candidates))* 100, 2)
         return hit_at_1/ float(len(self.candidates)), hit_at_2/ float(len(self.candidates)), hit_at_5/ float(len(self.candidates)), \
                hit_at_10/ float(len(self.candidates)), len(self.candidates)
 
+    def do_zero_shot_all_words(self,embeddings, category, use_reduced_vector_space):
+
+        self.word_counter = 0
+        self.zero_shot_counter = 0
+        self.word_changed_counter = 0
+
+        category = str(category)
+        for region_id in self.candidates:
+            region_id = str(region_id)
+            sentence = self.get_predictions(region_id)
+            self.word_counter += len(sentence)
+
+            for index, word in enumerate(sentence):
+                candidate_words_and_probs = self.candidates[region_id][str(index + 1)]
+                cand_words = [x[0] for x in candidate_words_and_probs]
+                cand_probs = [float(x[1]) for x in candidate_words_and_probs]
+                new_vec = embeddings.words2embedding_weighted(cand_words, cand_probs, use_reduced_vector_space)
+                if new_vec is not None:
+                    new_word = embeddings.get_words_for_vector(new_vec, 1, use_reduced_vector_space)
+                    ref = self.refs[region_id][0].split()
+                    ref[index] = new_word[0][0]
+                    new_ref = ' '.join(ref)
+                    self.zero_shot_refs[region_id] = [new_ref]
+                    self.zero_shot_counter += 1
+                    if not new_word[0][0] == word:
+                        self.word_changed_counter += 1
+                        print "____ ", region_id
+                        print "original: ", sentence
+                        print "after: ", new_ref
+
+        return [],[],[],[],len(self.candidates)
+
 
 if __name__ == '__main__':
 
-    cats = ['laptop', 'bus', 'horse']
-
-    use_reduced_vector_space = False
-    use_only_names = True
+    #cats = ['laptop', 'bus', 'horse']
+    cats = ['all']
+    use_reduced_vector_space = True # todo generate
+    use_only_names = False
+    exchange_all_words = True
     numbr_candidates = 10
     print "Number of vectors used for combination: ", numbr_candidates
     print "Reduced model: ", use_reduced_vector_space
 
 
     for c in cats:
-        model = '/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_' + c + '/'
+        model = '/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_' + c + '/'
         zs = Zero_Shooter(model, numbr_candidates)
         embed = helper.word_embeddings.Embeddings(model, use_only_names)
 
@@ -141,19 +179,32 @@ if __name__ == '__main__':
 
        # print zs.words_that_are_names
         print "**** ", c
-        results =  zs.do_zero_shot(embed, c, use_reduced_vector_space)
+        if exchange_all_words:
+            results = zs.do_zero_shot_all_words(embed, c, use_reduced_vector_space)
+        else:
+            results =  zs.do_zero_shot(embed, c, use_reduced_vector_space)
+        print "Exchanging all words (not only nouns): ", exchange_all_words
         print "number of utterances to analyse: ", len(zs.candidates)
       #  print "valid sentences:", results[4], ',', round(results[4]/float(len(zs.candidates)) * 100, 2), '%'
         print "( Number of embeddings: ", len(word_model.vocab), ")"
         chance_acc = 1 / float(len(word_model.vocab))
         print "chance: ",  round(chance_acc * 100, 4), '%'
-        print "accuracy hit@1: ", round(results[0] * 100, 2) , '%'
-        print "accuracy hit@2: ", round(results[1] * 100, 2) , '%'
-        print "accuracy hit@5: ", round(results[2] * 100, 2) , '%'
-        print "accuracy hit@10: ", round(results[3] * 100, 2) , '%'
-        print "correct hits before: ", round(zs.bus_counter / float(results[4]) * 100, 2), '%\n'
+#        print "accuracy hit@1: ", round(results[0] * 100, 2) , '%'
+ #       print "accuracy hit@2: ", round(results[1] * 100, 2) , '%'
+  #      print "accuracy hit@5: ", round(results[2] * 100, 2) , '%'
+   #     print "accuracy hit@10: ", round(results[3] * 100, 2) , '%'
+    #    print "correct hits before: ", round(zs.bus_counter / float(results[4]) * 100, 2), '%\n'
 
-        with open(model + 'zero_shot_refs_'+ str(c) + '.json', 'w') as f:
+#        print "zero-shot words: ", zs.zero_shot_counter
+ #       print "all words: ", zs.word_counter
+#        print "Percentage: ", zs.zero_shot_counter / float(zs.word_counter)
+        print "Word changed: ", zs.word_changed_counter / float(zs.zero_shot_counter)
+
+        if exchange_all_words:
+            name = 'all'
+        else:
+            name = 'nouns'
+        with open(model + 'zero_shot_refs_' + name + str(c) + '.json', 'w') as f:
             json.dump(zs.zero_shot_refs, f)
 
 

@@ -51,13 +51,8 @@ class Embeddings:
             for row in f.readlines():
                 self.word_that_are_names.append(row.strip())
 
-        complete_vocab = self.model_vocab + self.additional_words
-        print complete_vocab
-        print len(complete_vocab)
-        print self.additional_words
-
         self.embeddings  = defaultdict()
-        for word in complete_vocab:
+        for word in self.model_vocab:
             if self.use_names_only:
                 if word in self.word_that_are_names:
                     vector = self.get_global_vector(word)
@@ -67,6 +62,12 @@ class Embeddings:
                 vector = self.get_global_vector(word)
             if not len(vector) == 0:
                 self.embeddings[word] = vector
+
+        for word in self.additional_words:
+            if word not in self.embeddings.keys(): # sometimes it is already known
+                vector = self.get_global_vector(word)
+                if not len(vector) == 0:
+                    self.embeddings[word] = vector
 
     def write_new_glove_file(self):
         if self.use_names_only:
