@@ -10,7 +10,7 @@ class Zero_Shooter:
         self.bus_counter = 0
         with open(modelpath + 'all_highest_probs_'+ str(candidates) + '.json', 'r') as f:
             self.candidates = json.load(f)
-        with open(modelpath + 'inject_refcoco_refrnn_compositional_3_512_1/4eval_greedy.json', 'r') as f:
+        with open(modelpath + 'inject_refcoco_refrnn_compositional_3_512_1/4eval_greedy.json', 'r') as f:# 'restoredmodel_refs_greedy.json') as f:
             self.refs = json.load(f)
         self.words_that_are_names = list()
         with open("./noun_list_long.txt", 'r') as f:
@@ -158,9 +158,9 @@ if __name__ == '__main__':
 
     #cats = ['laptop', 'bus', 'horse']
     cats = ['all']
-    use_reduced_vector_space = True # todo generate
-    use_only_names = False
-    exchange_all_words = True
+    use_reduced_vector_space = False # todo generate
+    use_only_names = True
+    exchange_all_words = False
     numbr_candidates = 10
     print "Number of vectors used for combination: ", numbr_candidates
     print "Reduced model: ", use_reduced_vector_space
@@ -204,7 +204,7 @@ if __name__ == '__main__':
             name = 'all'
         else:
             name = 'nouns'
-        with open(model + 'zero_shot_refs_' + name + str(c) + '.json', 'w') as f:
+        with open(model + 'zero_shot_refs_' + str(c) + '.json', 'w') as f:
             json.dump(zs.zero_shot_refs, f)
 
 

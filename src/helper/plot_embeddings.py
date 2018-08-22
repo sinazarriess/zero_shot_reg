@@ -84,17 +84,17 @@ def display_closestwords_tsnescatterplot_compare(model, complete_model, word):
 
 
 if __name__ == "__main__":
-    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_74/', True)
-    global_model = embeddings.get_global_model()
+    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_1/', True)
+    #global_model = embeddings.get_global_model()
     word_model = embeddings.init_reduced_embeddings()
-    #display_closestwords_tsnescatterplot(global_model, 'mouse')
+    display_closestwords_tsnescatterplot(word_model, 'person')
     #print global_model.similar_by_word("mouse", 3)
-    print  global_model.similar_by_word('mouse', 3)
+    #print  global_model.similar_by_word('refrigerator', 3)
 
-    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_82/', True)
-    word_model = embeddings.init_reduced_embeddings()
-    print  global_model.similar_by_word('refridgerator', 3)
-
-    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_42/', True)
-    word_model = embeddings.init_reduced_embeddings()
-    print  word_model.similar_by_word('surfboard', 3)
+    # embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_82/', True)
+    # word_model = embeddings.init_reduced_embeddings()
+    # print  global_model.similar_by_word('refridgerator', 3)
+    #
+    # embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_42/', True)
+    # word_model = embeddings.init_reduced_embeddings()
+    # print  word_model.similar_by_word('surfboard', 3)

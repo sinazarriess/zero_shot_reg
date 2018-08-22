@@ -7,11 +7,11 @@ import utils
 from pprint import pprint
 import numpy as np
 
-modelpath = './model/with_reduced_cats_horse/'
-file_to_analyse = 'restoredmodel_refs_greedy.json'#'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json'
+modelpath = './new_models/with_reduced_cats_82/'
+file_to_analyse = 'zero_shot_refs_82.json'#'restoredmodel_refs_greedy.json'#'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json'
 #rawdata_path = "../data/refcoco/refcoco_refdf.json.gz"
 
-categories_excluded = [ 6 ]
+categories_excluded = [ 82 ]
 
 class Analyse:
     def __init__(self):
@@ -21,7 +21,7 @@ class Analyse:
         with open(modelpath + 'test.json', 'r') as f:
             self.reference = json.load(f)
 
-        with open(modelpath + 'highest_prob_candidates.json', 'r') as f:
+        with open(modelpath + 'highest_prob_candidates_10.json', 'r') as f:
             self.candidates = json.load(f)
 
         with open(modelpath + 'refs_moved_to_test.json', 'r') as f:

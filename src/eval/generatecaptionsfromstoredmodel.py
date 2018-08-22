@@ -37,7 +37,7 @@ class RefsGenerator:
     def read_excluded_ids(self):
         with open(self.model_dir + 'refs_moved_to_test.json', 'r') as f:
             ids = f.readline()
-        return ast.literal_eval(ids)
+            return ast.literal_eval(ids)
 
     def initialize_model(self):
         self.imported_meta = tf.train.import_meta_graph(self.model_dir + 'inject_refcoco_refrnn_compositional_3_512_1/model.meta')
@@ -139,7 +139,7 @@ class RefsGenerator:
 
 if __name__ == "__main__":
 
-    gen = RefsGenerator(10, './model/with_reduced_cats_laptop/')
+    gen = RefsGenerator(10, './model/with_reduced_cats_zebra/')
     gen.initialize_model()
     start = time.time()
     ids = gen.read_excluded_ids()

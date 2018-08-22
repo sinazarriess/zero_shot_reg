@@ -17,14 +17,14 @@ class Evalutator:
     def __init__(self, model_path):
         self.model_path = model_path
         self.reference_dict_path = model_path + 'test.json'
-        print  "Reference dict (test.json) exists: ", os.path.exists(self.reference_dict_path)
-        if os.path.exists(self.reference_dict_path):
-            with open(self.reference_dict_path, "r") as f:
-                self.refdict4eval = json.load(f)  # correct format
-
-        else:
-            self.refdict4eval = defaultdict()
-            self.prepare_ref_data()
+        #print  "Reference dict (test.json) exists: ", os.path.exists(self.reference_dict_path)
+        # if os.path.exists(self.reference_dict_path):
+        #     with open(self.reference_dict_path, "r") as f:
+        #         self.refdict4eval = json.load(f)  # correct format
+        #
+        # else:
+        self.refdict4eval = defaultdict()
+        self.prepare_ref_data()
 
 
     def run_eval(self, candidate):
@@ -81,11 +81,18 @@ class Evalutator:
 if __name__ == '__main__':
 
     #eval.run_eval('./jsons/no_unknown_for_comp.json')
-    model_path = 'model/with_reduced_cats_bus/'
-    eval = Evalutator(model_path)
-    eval.run_eval(model_path + 'restoredmodel_refs_greedy.json') #'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') #'restoredmodel_refs_beam.json')
-    score_1 = 0
-    score_2 = 0
+    #cats = ['laptop', 'bus', 'horse']
+    cats = ['all']
+
+    for c in cats:
+        print '###############\n ', c
+        model_path = 'new_models/with_reduced_cats_' + c +'/'
+        eval = Evalutator(model_path)
+        eval.run_eval(model_path + 'zero_shot_refs_' + c + '.json') #'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') #'restoredmodel_refs_beam.json')
+        #eval.run_eval(model_path + 'zero_shot_refs_82.json')# 'inject_refcoco_refrnn_compositional_3_512_1/4eval_greedy.json')
+        #eval.run_eval(model_path + 'restoredmodel_refs_greedy.json')
+        score_1 = 0
+        score_2 = 0
 
 #    for i in range(1,4):
  #       print "evaluate " + candidate_path_1 + str(i) + '.json'

@@ -174,8 +174,8 @@ class Embeddings:
 
 if __name__ == '__main__':
 
-    use_only_nouns = True
-    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_horse/', use_only_nouns)
+    use_only_nouns = False
+    embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_all/', use_only_nouns)
     ## generate custom embeddings for a model (with reduced vocabulary)
     embeddings.generate_reduced_w2v_file()
 
@@ -189,7 +189,7 @@ if __name__ == '__main__':
 
     start = time.time()
     ## how to use
-    horse_vec = embeddings.get_vector_for_word('horse')
+    #horse_vec = embeddings.get_vector_for_word('mouse')
     #print embeddings.get_words_for_vector(horse_vec, 1)
 
     end = time.time()

@@ -9,7 +9,7 @@ import statistics
 import utils
 import ast
 
-modelpath = 'model/with_unknown/'
+modelpath = 'model/with_reduced_cats_horse/' #with_unknown
 file2analyse = 'restoredmodel_refs_greedy.json' #'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json'
 
 
@@ -25,7 +25,7 @@ class Analyse:
         with open(modelpath + 'test.json', "r") as f: # TODO Achtung
             self.reference = json.load(f)
 
-        with open('./model/without_unknown/inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') as f:
+        with open(modelpath + 'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') as f:
             self.without_unknown_candidate = json.load(f)
 
         try:
@@ -49,12 +49,12 @@ class Analyse:
         for refex_id in self.unknown_candidate:
             comparison = defaultdict()
             for word in self.unknown_candidate[refex_id]:
-                if "UNKNOWN" in word:
-                    unknown_counter += 1
-                    comparison['reflist'] = self.reference[refex_id]
+              #  if "UNKNOWN" in word:                                        #TODO
+                unknown_counter += 1
+                comparison['reflist'] = self.reference[refex_id]
 #                    comparison['original generated caption'] = self.without_unknown_candidate[refex_id] #TODO
-                    comparison['with unknown'] = self.unknown_candidate[refex_id]
-                    self.analysis_dict[refex_id] = comparison
+                comparison['with unknown'] = self.unknown_candidate[refex_id]
+                self.analysis_dict[refex_id] = comparison
 
         print "Number of unknown occurences: ", unknown_counter
 
@@ -123,6 +123,7 @@ class Analyse:
             pprint(data[region_id])
             cv.imshow('test', img)
             c = cv.waitKey(0);
+            c = cv.waitKey(0);
             return
         else:
             average_length = 0
@@ -173,6 +174,11 @@ class Analyse:
 
 if __name__ == "__main__":
     a = Analyse()
-    a.analyse()
-    a.visualize_unknown()
+  #  a.analyse()
+ #   a.visualize_unknown('274465')
+    #a.visualize_unknown('1098821')
+    #a.visualize_unknown('167394')
+
+  #  a.visualize_unknown('590024')
+    #a.visualize_unknown('56524')
     a.analyze_freqs()
