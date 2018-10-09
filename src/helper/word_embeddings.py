@@ -4,7 +4,6 @@ from gensim.scripts.glove2word2vec import glove2word2vec
 from collections import defaultdict
 import numpy as np
 import time
-import csv
 
 glove_files_path = "/mnt/Data/zero_shot_reg/gloVe/"
 
