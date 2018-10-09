@@ -1,0 +1,1006 @@
+{
+    "1137836": {
+        "bb": [
+            152.53,
+            56.32,
+            347.47,
+            313.48
+        ],
+        "cat": 84,
+        "image_id": 499538,
+        "original generated caption": [
+            "right hand"
+        ],
+        "refexp_id": 20457,
+        "reflist": [
+            "the book on the right with the bird",
+            "bird",
+            "book on the right"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1137907": {
+        "bb": [
+            63.02,
+            55.62,
+            283.9,
+            204.5
+        ],
+        "cat": 84,
+        "image_id": 290549,
+        "original generated caption": [
+            "book on right"
+        ],
+        "refexp_id": 72021,
+        "reflist": [
+            "book",
+            "the open book",
+            "top open book"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1138064": {
+        "bb": [
+            80.86,
+            148.05,
+            375.02,
+            66.08
+        ],
+        "cat": 84,
+        "image_id": 354608,
+        "original generated caption": [
+            "white book"
+        ],
+        "refexp_id": 55571,
+        "reflist": [
+            "crows and ravens",
+            "book titled crows and ravens",
+            "crows and ravens book"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1140193": {
+        "bb": [
+            44.66,
+            13.83,
+            235.96,
+            361.17
+        ],
+        "cat": 84,
+        "image_id": 499538,
+        "original generated caption": [
+            "blue book"
+        ],
+        "refexp_id": 20454,
+        "reflist": [
+            "book on left",
+            "book on left",
+            "left bookj"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1140394": {
+        "bb": [
+            31.18,
+            0.84,
+            468.82,
+            131.46
+        ],
+        "cat": 84,
+        "image_id": 414607,
+        "original generated caption": [
+            "red books"
+        ],
+        "refexp_id": 41416,
+        "reflist": [
+            "top books",
+            "well arranged books tup shelf"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "116252": {
+        "bb": [
+            7.19,
+            280.7,
+            252.85,
+            189.12
+        ],
+        "cat": 63,
+        "image_id": 321969,
+        "original generated caption": [
+            "couch"
+        ],
+        "refexp_id": 64208,
+        "reflist": [
+            "patterned chair",
+            "chair thing"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1186784": {
+        "bb": [
+            7.21,
+            15.14,
+            318.56,
+            149.91
+        ],
+        "cat": 33,
+        "image_id": 340703,
+        "original generated caption": [
+            "right one"
+        ],
+        "refexp_id": 58819,
+        "reflist": [
+            "top breifcase",
+            "top brown briefcase",
+            "top case easy"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1375044": {
+        "bb": [
+            138.18,
+            39.65,
+            416.98,
+            114.77
+        ],
+        "cat": 9,
+        "image_id": 313786,
+        "original generated caption": [
+            "red plane"
+        ],
+        "refexp_id": 66278,
+        "reflist": [
+            "very top of the ship queen elizabeth",
+            "top of ship where name is written",
+            "red smokestack above queen eliz"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1375728": {
+        "bb": [
+            3.24,
+            147.57,
+            636.76,
+            136.21
+        ],
+        "cat": 9,
+        "image_id": 313786,
+        "original generated caption": [
+            "left boat"
+        ],
+        "refexp_id": 66275,
+        "reflist": [
+            "span of the middle of ship",
+            "cruise ship balconies",
+            "middle deck on the cruise ship"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1377212": {
+        "bb": [
+            0.0,
+            235.87,
+            427.0,
+            146.69
+        ],
+        "cat": 9,
+        "image_id": 277867,
+        "original generated caption": [
+            "front boat"
+        ],
+        "refexp_id": 75211,
+        "reflist": [
+            "third from front",
+            "white boat gray motor brown seats",
+            "boat with brown seats"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1390269": {
+        "bb": [
+            298.37,
+            151.42,
+            181.63,
+            435.53
+        ],
+        "cat": 14,
+        "image_id": 294823,
+        "original generated caption": [
+            "right book"
+        ],
+        "refexp_id": 71217,
+        "reflist": [
+            "box closest to camera",
+            "closest box",
+            "parking meter"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1426268": {
+        "bb": [
+            0.75,
+            1.12,
+            172.73,
+            70.29
+        ],
+        "cat": 28,
+        "image_id": 158362,
+        "original generated caption": [
+            "top left"
+        ],
+        "refexp_id": 103441,
+        "reflist": [
+            "top left corner",
+            "left rmf",
+            "far left umbrella"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1535661": {
+        "bb": [
+            126.37,
+            1.09,
+            150.29,
+            136.92
+        ],
+        "cat": 51,
+        "image_id": 219349,
+        "original generated caption": [
+            "right cup"
+        ],
+        "refexp_id": 89231,
+        "reflist": [
+            "sugarbowl",
+            "black cup top center holding spelndasweetnlow",
+            "blue container holding sugar packets"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1545157": {
+        "bb": [
+            267.03,
+            78.38,
+            372.97,
+            395.67
+        ],
+        "cat": 52,
+        "image_id": 105620,
+        "original generated caption": [
+            "bottom right"
+        ],
+        "refexp_id": 116017,
+        "reflist": [
+            "the banana cut pieces on right",
+            "right banana",
+            "banana slice on right",
+            "bananas on the right"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1546143": {
+        "bb": [
+            192.51,
+            72.66,
+            198.41,
+            204.31
+        ],
+        "cat": 52,
+        "image_id": 326056,
+        "original generated caption": [
+            "left banana"
+        ],
+        "refexp_id": 63035,
+        "reflist": [
+            "bananas in middle",
+            "top middle banana slices"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "161838": {
+        "bb": [
+            195.33,
+            53.36,
+            444.67,
+            342.06
+        ],
+        "cat": 5,
+        "image_id": 28870,
+        "original generated caption": [
+            "white plane"
+        ],
+        "refexp_id": 135168,
+        "reflist": [
+            "jet middle next to flag",
+            "plane by flag",
+            "big white plane in center of pic"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1626509": {
+        "bb": [
+            0.0,
+            0.0,
+            201.55,
+            84.72
+        ],
+        "cat": 72,
+        "image_id": 362031,
+        "original generated caption": [
+            "computer screen"
+        ],
+        "refexp_id": 53849,
+        "reflist": [
+            "top left menu",
+            "left screen",
+            "left menu"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1631127": {
+        "bb": [
+            2.17,
+            240.71,
+            306.65,
+            98.49
+        ],
+        "cat": 75,
+        "image_id": 299463,
+        "original generated caption": [
+            "black remote"
+        ],
+        "refexp_id": 69839,
+        "reflist": [
+            "left keyboardremote",
+            "electronic device on left",
+            "device left side"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1676620": {
+        "bb": [
+            421.66,
+            207.13,
+            218.34,
+            281.84
+        ],
+        "cat": 1,
+        "image_id": 389145,
+        "original generated caption": [
+            "right"
+        ],
+        "refexp_id": 47634,
+        "reflist": [
+            "mascot",
+            "mascot",
+            "bird"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1856611": {
+        "bb": [
+            101.95,
+            21.88,
+            350.43,
+            110.29
+        ],
+        "cat": 38,
+        "image_id": 128286,
+        "original generated caption": [
+            "right dog"
+        ],
+        "refexp_id": 110679,
+        "reflist": [
+            "top most kite",
+            "top rainbow kite",
+            "kite on top"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1957436": {
+        "bb": [
+            0.97,
+            0.0,
+            371.11,
+            369.16
+        ],
+        "cat": 65,
+        "image_id": 57242,
+        "original generated caption": [
+            "book on left"
+        ],
+        "refexp_id": 127927,
+        "reflist": [
+            "space around pizza box",
+            "table under pizza box left side"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1968459": {
+        "bb": [
+            0.0,
+            0.0,
+            396.47,
+            135.52
+        ],
+        "cat": 72,
+        "image_id": 391332,
+        "original generated caption": [
+            "computer screen"
+        ],
+        "refexp_id": 47096,
+        "reflist": [
+            "screen top left",
+            "monitor on let"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "1979381": {
+        "bb": [
+            189.25,
+            323.98,
+            273.82,
+            103.02
+        ],
+        "cat": 79,
+        "image_id": 281003,
+        "original generated caption": [
+            "stove"
+        ],
+        "refexp_id": 74377,
+        "reflist": [
+            "the dials and white tiles at the bottom",
+            "bottom center",
+            "bottom part of pizza baker"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "2015273": {
+        "bb": [
+            123.63,
+            33.8,
+            157.3,
+            216.5
+        ],
+        "cat": 1,
+        "image_id": 468401,
+        "original generated caption": [
+            "guy in background"
+        ],
+        "refexp_id": 28095,
+        "reflist": [
+            "red",
+            "blurry person behind batter in red",
+            "blurry guy in red"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "2077932": {
+        "bb": [
+            209.45,
+            42.39,
+            225.67,
+            189.51
+        ],
+        "cat": 31,
+        "image_id": 536127,
+        "original generated caption": [
+            "right guy"
+        ],
+        "refexp_id": 11426,
+        "reflist": [
+            "top bag black or dark green",
+            "black bag toward back",
+            "black bag"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "2093241": {
+        "bb": [
+            182.57,
+            179.94,
+            116.49,
+            183.79
+        ],
+        "cat": 44,
+        "image_id": 330607,
+        "original generated caption": [
+            "second from right"
+        ],
+        "refexp_id": 61766,
+        "reflist": [
+            "middle gallon of milk",
+            "milk being touched",
+            "milk near hand"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "2096586": {
+        "bb": [
+            331.45,
+            0.53,
+            98.49,
+            158.05
+        ],
+        "cat": 44,
+        "image_id": 99159,
+        "original generated caption": [
+            "white mug"
+        ],
+        "refexp_id": 117562,
+        "reflist": [
+            "bottle with blue in light blue in it",
+            "baby blue bottle",
+            "blue bottle"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "25331": {
+        "bb": [
+            143.5,
+            269.78,
+            106.19,
+            173.63
+        ],
+        "cat": 64,
+        "image_id": 296009,
+        "original generated caption": [
+            "right beer"
+        ],
+        "refexp_id": 70911,
+        "reflist": [
+            "second vase in",
+            "second pot from front",
+            "second pot"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "316143": {
+        "bb": [
+            235.58,
+            33.65,
+            404.42,
+            282.18
+        ],
+        "cat": 65,
+        "image_id": 502553,
+        "original generated caption": [
+            "white jacket"
+        ],
+        "refexp_id": 19723,
+        "reflist": [
+            "bed person is on",
+            "white headboard",
+            "right bed"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "366334": {
+        "bb": [
+            1.08,
+            140.22,
+            111.1,
+            153.17
+        ],
+        "cat": 6,
+        "image_id": 301158,
+        "original generated caption": [
+            "blue bus"
+        ],
+        "refexp_id": 69480,
+        "reflist": [
+            "the addbus on the right with the man reading",
+            "far left green sign with man",
+            "bus on the far left"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "368701": {
+        "bb": [
+            269.7,
+            412.22,
+            145.24,
+            183.42
+        ],
+        "cat": 19,
+        "image_id": 139811,
+        "original generated caption": [
+            "white cake"
+        ],
+        "refexp_id": 107869,
+        "reflist": [
+            "horse on right",
+            "horse on right"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "370789": {
+        "bb": [
+            2.88,
+            0.0,
+            195.59,
+            297.71
+        ],
+        "cat": 44,
+        "image_id": 481530,
+        "original generated caption": [
+            "red sauce"
+        ],
+        "refexp_id": 25024,
+        "reflist": [
+            "vodka",
+            "vodka bottle",
+            "triple vodka"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "370881": {
+        "bb": [
+            136.94,
+            2.16,
+            181.62,
+            322.89
+        ],
+        "cat": 44,
+        "image_id": 481530,
+        "original generated caption": [
+            "right cup"
+        ],
+        "refexp_id": 25021,
+        "reflist": [
+            "curlys bag",
+            "curlys cup",
+            "curlys"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "371376": {
+        "bb": [
+            340.85,
+            395.51,
+            139.15,
+            189.84
+        ],
+        "cat": 44,
+        "image_id": 197407,
+        "original generated caption": [
+            "right one"
+        ],
+        "refexp_id": 94520,
+        "reflist": [
+            "yellow bottle right",
+            "right yellow bottle",
+            "red lid far right"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "371832": {
+        "bb": [
+            253.82,
+            542.3,
+            122.12,
+            97.7
+        ],
+        "cat": 44,
+        "image_id": 197407,
+        "original generated caption": [
+            "white mug"
+        ],
+        "refexp_id": 94517,
+        "reflist": [
+            "bottom right bottle",
+            "down",
+            "front right bottle"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "391544": {
+        "bb": [
+            146.81,
+            351.2,
+            371.35,
+            71.0
+        ],
+        "cat": 67,
+        "image_id": 259809,
+        "original generated caption": [
+            "the table"
+        ],
+        "refexp_id": 79501,
+        "reflist": [
+            "pancakes",
+            "front pancake",
+            "pancakes"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "396138": {
+        "bb": [
+            125.87,
+            78.88,
+            165.9,
+            229.09
+        ],
+        "cat": 8,
+        "image_id": 52299,
+        "original generated caption": [
+            "white bus"
+        ],
+        "refexp_id": 129398,
+        "reflist": [
+            "food truck in rear",
+            "ttan truck",
+            "yellow truck"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "398117": {
+        "bb": [
+            115.16,
+            154.48,
+            323.85,
+            194.91
+        ],
+        "cat": 8,
+        "image_id": 240586,
+        "original generated caption": [
+            "trailer"
+        ],
+        "refexp_id": 84107,
+        "reflist": [
+            "truck",
+            "center of pic truck",
+            "back of flat bed truck"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "40200": {
+        "bb": [
+            124.35,
+            86.56,
+            201.16,
+            334.65
+        ],
+        "cat": 16,
+        "image_id": 413088,
+        "original generated caption": [
+            "middle chicken"
+        ],
+        "refexp_id": 41734,
+        "reflist": [
+            "bird in front",
+            "chicken",
+            "front left chicken"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "458457": {
+        "bb": [
+            7.47,
+            8.41,
+            632.53,
+            410.18
+        ],
+        "cat": 1,
+        "image_id": 404473,
+        "original generated caption": [
+            "car"
+        ],
+        "refexp_id": 43814,
+        "reflist": [
+            "helmet",
+            "helmet",
+            "helmet"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "495890": {
+        "bb": [
+            386.02,
+            114.98,
+            168.73,
+            240.48
+        ],
+        "cat": 1,
+        "image_id": 17938,
+        "original generated caption": [
+            "right umbrella"
+        ],
+        "refexp_id": 137878,
+        "reflist": [
+            "right person in air",
+            "bro on the right in the air"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "538737": {
+        "bb": [
+            320.5,
+            96.46,
+            201.49,
+            224.68
+        ],
+        "cat": 1,
+        "image_id": 262239,
+        "original generated caption": [
+            "person on right"
+        ],
+        "refexp_id": 78737,
+        "reflist": [
+            "chef on the right",
+            "right cook",
+            "right dude"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "680703": {
+        "bb": [
+            1.37,
+            40.62,
+            201.72,
+            205.83
+        ],
+        "cat": 47,
+        "image_id": 219349,
+        "original generated caption": [
+            "white mug"
+        ],
+        "refexp_id": 89242,
+        "reflist": [
+            "left coffee cup",
+            "left coffee mug",
+            "yellow cup on left"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "683661": {
+        "bb": [
+            66.16,
+            300.58,
+            428.58,
+            322.16
+        ],
+        "cat": 47,
+        "image_id": 240662,
+        "original generated caption": [
+            "coffee cup"
+        ],
+        "refexp_id": 84086,
+        "reflist": [
+            "cofee close",
+            "bottom mug",
+            "cup front and center"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "88799": {
+        "bb": [
+            162.06,
+            396.36,
+            109.87,
+            177.17
+        ],
+        "cat": 44,
+        "image_id": 197407,
+        "original generated caption": [
+            "green mug"
+        ],
+        "refexp_id": 94528,
+        "reflist": [
+            "center bottle",
+            "mustard bottle with brown top"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    },
+    "89502": {
+        "bb": [
+            46.9,
+            429.66,
+            135.31,
+            200.59
+        ],
+        "cat": 44,
+        "image_id": 335107,
+        "original generated caption": [
+            "left book"
+        ],
+        "refexp_id": 60462,
+        "reflist": [
+            "wine left",
+            "wine bottle at the bottom left"
+        ],
+        "with unknown": [
+            "UNKNOWN"
+        ]
+    }
+}

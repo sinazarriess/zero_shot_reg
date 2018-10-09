@@ -4,24 +4,45 @@ import collections
 import pandas as pd
 import json
 import params as p
+import ast
 
 class Data:
 
-    def __init__(self):  #todo soll das so bleiben?
+    def __init__(self, res_dir, words_excluded= [], cats_excluded = [], additional_words = [], imgfeatpath = "../data/refcoco/mscoco_vgg19_refcoco.npz",
+                 refspath = "../data/refcoco/refcoco_refdf.json.gz", splitpath = "../data/refcoco/refcoco_splits.json"):
+
+        self.results_data_dir = res_dir
+        self.imgfeatures_path = imgfeatpath
+        self.refs_path = refspath
+        self.split_path = splitpath
+        self.discarded_words = []
+        self.excluded_words = words_excluded
+        self.excluded_categories_ids = cats_excluded
+        self.additional = additional_words
+        self.refs_moved_to_test = [] # ids of all those words ignored and put into test set
+
         self.load_data()
         self.prepare_data()
         self.clean_vocab()
         self.prepare_training()
 
+        with open(self.results_data_dir + '/words_too_rare.json', 'w') as f:
+            json.dump(self.discarded_words, f)
+        with open(self.results_data_dir + '/refs_moved_to_test.json', 'w') as f:
+            json.dump(self.refs_moved_to_test, f)
+
+        if len(self.refs_moved_to_test) == 0:
+            print "category not in training set"
+
     def load_data(self):
         ############ load and prepare image features ###########################
 
         # Image Features  --> numpy npz file includes one key/array, arr_0
-        self.extracted_features = np.load("../data/refcoco/mscoco_vgg19_refcoco.npz")['arr_0']
+        self.extracted_features = np.load(self.imgfeatures_path)['arr_0']
 
         ########### load and prepare referring expressions dataset ##############
-        refcoco_data = pd.read_json("../data/refcoco/refcoco_refdf.json.gz", orient="split", compression="gzip")
-        with open("../data/refcoco/refcoco_splits.json") as f:
+        refcoco_data = pd.read_json(self.refs_path, orient="split", compression="gzip")
+        with open(self.split_path) as f:
             splits = json.load(f)
         splitmap = {'val': 'val', 'train': 'train', 'testA': 'test', 'testB': 'test'}
         # for every group in split --> for every entry --> make entry in new dict
@@ -67,6 +88,8 @@ class Data:
                 features_for_imageId[:, 2] == obj2phrases_item[1]]  # obj2phrases_item[1] is region id
 
             if len(features_for_objectId) > 0:
+
+                isIgnored = []
                 image = np.array(features_for_objectId[0])[3:]  # due to data structure -> indices
                 test_list.append(np.array(features_for_objectId[0])[3:])
                 test_count += 1
@@ -77,40 +100,63 @@ class Data:
                 for ref in self.obj2phrases[obj2phrases_item]:
                     caption_group.append(ref)
 
+                    for word in self.excluded_words:
+                        if word in ref:
+                            isIgnored = True
+
+                    if obj2phrases_item[1] in self.excluded_categories_ids:
+                        isIgnored = True
+
                 image = image / np.linalg.norm(image)
 
-                self.raw_dataset[split]['filenames'].append(filename)
-                self.raw_dataset[split]['images'].append(image)
-                self.raw_dataset[split]['captions'].append(caption_group)
+                if not isIgnored:
+                    self.raw_dataset[split]['filenames'].append(filename)
+                    self.raw_dataset[split]['images'].append(image)
+                    self.raw_dataset[split]['captions'].append(caption_group)
+                    #for ref in caption_group:
+                      #  if 'laptop' in ref:
+                        #    print filename
+                else:
+                    self.raw_dataset['test']['filenames'].append(filename)
+                    self.raw_dataset['test']['images'].append(image)
+                    self.raw_dataset['test']['captions'].append(caption_group)
+                    self.refs_moved_to_test.append(str(obj2phrases_item[1]))
+
 
         print 'raw data set', len(self.raw_dataset['train']['captions'])  # 42279
+        print len(self.raw_dataset['val']['images'])
+        print len(self.raw_dataset['test']['images'])
 
-        ''''' todo remove'''
-        print(len(self.raw_dataset['train']['images']) + len(self.raw_dataset['val']['images']) + \
-              len(self.raw_dataset['test']['images']))  # should be 49865
 
-        print(self.raw_dataset['train']['captions'][
-            0])  # output : [[u'hidden', u'chocolate', u'donut'], [u'space', u'right', u'above', u'game']]
-        print(self.raw_dataset['train']['captions'][111])  # output : [[u'groom'], [u'groom'], [u'man']]
+      #  print(len(self.raw_dataset['train']['images']) + len(self.raw_dataset['val']['images']) + \
+       #       len(self.raw_dataset['test']['images']))  # should be 49865
+
+      #  print(self.raw_dataset['train']['captions'][0])  # output : [[u'hidden', u'chocolate', u'donut'], [u'space', u'right', u'above', u'game']]
+      #  print(self.raw_dataset['train']['captions'][111])  # output : [[u'groom'], [u'groom'], [u'man']]
 
         # to compare with original scripts: here, the order is like
         # in im_mat from prepare_refcoco.py.
-        print("count", test_count)  # 49865
-        test_list = np.array(test_list)
-        print(test_list.shape)
-        print("test:: ", test_list[1][0])  # 0.0729042887688 --> like in original script (random number chosen)
+     #   print("count", test_count)  # 49865
+     #   test_list = np.array(test_list)
+      #  print(test_list.shape)
+      #  print("test:: ", test_list[1][0])  # 0.0729042887688 --> like in original script (random number chosen)
 
     def clean_vocab(self):
         ################################################################
         # for min_token_freq in [ 3, 4, 5 ]:
         all_tokens = (token for caption_group in self.raw_dataset['train']['captions'] for caption in caption_group for token
-                      in
-                      caption)
+                      in caption)
+
         token_freqs = collections.Counter(all_tokens)
         self.vocab = sorted(token_freqs.keys(), key=lambda token: (-token_freqs[token], token))
+
+        with open(self.results_data_dir + '/token_freqs.json', 'w') as f:
+            json.dump(token_freqs , f)
+
+        print "all tokens count: ", len(self.vocab)
         # discard words with very low frequency
         while token_freqs[self.vocab[-1]] < p.min_token_freq:
-            self.vocab.pop()
+            self.discarded_words.append(self.vocab.pop())
 
         self.vocab_size = len(self.vocab) + 2  # + edge and unknown tokens
         print('vocab:', self.vocab_size)
@@ -139,6 +185,8 @@ class Data:
     def prepare_training(self):
         self.token_to_index = {token: i + 2 for (i, token) in enumerate(self.vocab)}
         self.index_to_token = {i + 2: token for (i, token) in enumerate(self.vocab)}
+
+        self.index_to_token[1] = "UNKNOWN"
         self.edge_index = 0
         self.unknown_index = 1
 
@@ -149,3 +197,5 @@ class Data:
 
 
 
+if __name__ == "__main__":
+    data = Data()

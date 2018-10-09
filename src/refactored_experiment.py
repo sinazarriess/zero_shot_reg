@@ -199,7 +199,7 @@ if __name__ == '__main__':
         lens = list()
         images = list()
         for (caption_group, img) in zip(data['captions'], data['images']):
-            for caption in caption_group:
+            for caption in caption_group:             # := default is unknown
                 indexes_ = [token_to_index.get(token, unknown_index) for token in caption]
                 indexes.append(indexes_)
                 lens.append(len(indexes_) + 1)  # add 1 due to edge token
