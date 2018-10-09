@@ -77,17 +77,17 @@ if __name__ == '__main__':
 
     print "******** Train model ****************"
 
-    results_data_dir = '/media/compute/vol/dsg/lilian/exp/with_reduced_cats_' + 'all'
+    results_data_dir = '/media/compute/vol/dsg/lilian/exp/with_reduced_cats_' + 'test'
 
     data_interface = data.Data(results_data_dir, [], [], [])
     print data_interface.vocab_size
     training = train.Learn(results_data_dir)
-    for run in range(1, params.num_runs + 1):
-        model = lstm.LSTM(run, data_interface.vocab_size, results_data_dir, [], data_interface.index_to_token)
-        model.build_network()
-        training.run_training(model, data_interface)
-
-    generate_indextotoken(data_interface, results_data_dir, [])
+    # for run in range(1, params.num_runs + 1):
+    #     model = lstm.LSTM(run, data_interface.vocab_size, results_data_dir, [], data_interface.index_to_token)
+    #     model.build_network()
+    #     training.run_training(model, data_interface)
+    #
+    # generate_indextotoken(data_interface, results_data_dir, [])
 
 
 

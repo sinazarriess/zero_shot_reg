@@ -6,6 +6,9 @@ import numpy as np
 import bleu
 import ast
 
+## Script for the data preparation for evaluation. Depending on the "costum" train/test splits,
+## files are created containing reference expressions and generated expressions.
+
 test_ids = []
 
 candidate_path_1 = 'restoredmodel_captions_' #'jsons/4evalrefactoredexpinject_refcoco_refrnn_compositional_3_512_'  # original script output
@@ -81,14 +84,14 @@ class Evalutator:
 if __name__ == '__main__':
 
     #eval.run_eval('./jsons/no_unknown_for_comp.json')
-    #cats = ['laptop', 'bus', 'horse']
-    cats = ['all']
+    cats = ['laptop', 'bus', 'horse']
+    #cats = ['all']
 
     for c in cats:
         print '###############\n ', c
         model_path = 'new_models/with_reduced_cats_' + c +'/'
         eval = Evalutator(model_path)
-        eval.run_eval(model_path + 'zero_shot_refs_' + c + '.json') #'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') #'restoredmodel_refs_beam.json')
+        eval.run_eval(model_path + 'zero_shot_refs_all' + c + '.json') #'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') #'restoredmodel_refs_beam.json')
         #eval.run_eval(model_path + 'zero_shot_refs_82.json')# 'inject_refcoco_refrnn_compositional_3_512_1/4eval_greedy.json')
         #eval.run_eval(model_path + 'restoredmodel_refs_greedy.json')
         score_1 = 0

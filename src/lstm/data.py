@@ -124,8 +124,10 @@ class Data:
 
 
         print 'raw data set', len(self.raw_dataset['train']['captions'])  # 42279
+        print len(self.raw_dataset['val']['images'])
+        print len(self.raw_dataset['test']['images'])
 
-        ''''' todo remove'''
+
       #  print(len(self.raw_dataset['train']['images']) + len(self.raw_dataset['val']['images']) + \
        #       len(self.raw_dataset['test']['images']))  # should be 49865
 

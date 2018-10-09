@@ -6,8 +6,8 @@ refcoco_data = pd.read_json("./../../data/refcoco_refdf.json.gz", orient="split"
 bounding_boxes = pd.read_json('../../data/mscoco_bbdf.json.gz', orient="split", compression="gzip")
 analysis_dict = defaultdict()
 
-img_id = "345835" #
-region_id = "77040"
+img_id = "364862" # 364862,
+region_id = "1698822"
 for index, row in refcoco_data.iterrows():
     if str(row['region_id']) == region_id:
         analysis_dict[str(row['region_id'])] = defaultdict()
@@ -21,7 +21,7 @@ for index, row in bounding_boxes.iterrows():
         analysis_dict[str(row['region_id'])]['cat'] = row['cat']
         analysis_dict[str(row['region_id'])]['bb'] = row['bb']
 
-#img_id = "219248"
+#img_id = "462445"
 #region_id = "274465"
 filename = "/mnt/Data/zero_shot_reg/coco-caption/images/train2014/COCO_train2014_" + str(img_id).zfill(12) + ".jpg"
 bb_pt1 = (int(analysis_dict[region_id]['bb'][0]), int(analysis_dict[region_id]['bb'][1]))

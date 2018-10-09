@@ -120,6 +120,8 @@ class Embeddings:
             if self.global_model_initialized:
                 if word in self.global_model.vocab:
                     return self.global_model[word]
+            else:
+                print "not initialized"
         return []
 
     def get_words_for_vector(self, vec, n, from_small_model):
@@ -130,7 +132,8 @@ class Embeddings:
         else:
             if self.global_model_initialized:
                 return self.global_model.similar_by_vector(vec, topn=n)
-
+            else:
+                print "not initialized"
         return ""
 
 
@@ -177,7 +180,7 @@ if __name__ == '__main__':
     use_only_nouns = False
     embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_all/', use_only_nouns)
     ## generate custom embeddings for a model (with reduced vocabulary)
-    embeddings.generate_reduced_w2v_file()
+    #embeddings.generate_reduced_w2v_file()
 
     start = time.time()
 
@@ -189,7 +192,8 @@ if __name__ == '__main__':
 
     start = time.time()
     ## how to use
-    #horse_vec = embeddings.get_vector_for_word('mouse')
+    horse_vec = embeddings.get_vector_for_word('white',1)
+    print horse_vec
     #print embeddings.get_words_for_vector(horse_vec, 1)
 
     end = time.time()
