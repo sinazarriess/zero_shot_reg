@@ -7,10 +7,11 @@ from nltk.corpus import brown
 class Zero_Shooter:
 
     def __init__(self, modelpath, candidates):
+        self.modelpath = modelpath
         self.bus_counter = 0
         with open(modelpath + 'all_highest_probs_'+ str(candidates) + '.json', 'r') as f:
             self.candidates = json.load(f)
-        with open(modelpath + 'inject_refcoco_refrnn_compositional_3_512_1/4eval_greedy.json', 'r') as f:# 'restoredmodel_refs_greedy.json') as f:
+        with open(modelpath + 'inject_refcoco_refrnn_compositional_3_512_1/4eval_greedy.json', 'r') as f:# 'restoredmodel_refs_greedy.json') as f: restoredmodel_refs_greedy/4eval_greedy
             self.refs = json.load(f)
         self.words_that_are_names = list()
         with open("./noun_list_long.txt", 'r') as f:
@@ -19,6 +20,9 @@ class Zero_Shooter:
         self.unigram_tagger = UnigramTagger(brown.tagged_sents())
         self.zero_shot_refs = defaultdict()
         self.non_noun_counter = 0
+        self.baseline_top_1 = defaultdict()
+        self.baseline_top_5 = defaultdict()
+        self.baseline_top_10 = defaultdict()
 
     def get_predictions(self, region_id):
         predictions = list()
@@ -59,16 +63,20 @@ class Zero_Shooter:
     def do_zero_shot(self, embeddings, category, use_reduced_vector_space):
         self.word_changed_counter = 0
         self.zero_shot_counter = 0
+        self.word_counter = 0
         category = str(category)
         hit_at_1 = 0
         hit_at_2 = 0
         hit_at_5 = 0
         hit_at_10 = 0
+        with open("/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_all/vocab_list.txt", 'r') as f:
+            vocab = f.read().splitlines()
 
         for region_id in self.candidates:
 
             region_id = str(region_id)
             sentence = self.get_predictions(region_id)
+            self.word_counter += len(sentence)
 
             ## use pos tagger
             #index = self.parse_pos(sentence, category)
@@ -90,6 +98,33 @@ class Zero_Shooter:
                 new_words_5 = embeddings.get_words_for_vector(new_vec, 5, use_reduced_vector_space)
                 new_words_2 = embeddings.get_words_for_vector(new_vec, 2, use_reduced_vector_space)
                 new_words_1 = embeddings.get_words_for_vector(new_vec, 1, use_reduced_vector_space)
+
+                ##### generate baselines for comparison with WAC  ####
+                for x in new_words_1:
+                    if x[0] in self.baseline_top_1:
+                        self.baseline_top_1[x[0]] += 1
+                    else:
+                        self.baseline_top_1[x[0]] = 1
+
+                for x in new_words_5:
+                    if x[0] in self.baseline_top_5:
+                        self.baseline_top_5[x[0]] += 1
+                    else:
+                        self.baseline_top_5[x[0]] = 1
+
+                for x in new_words_10:
+                    if x[0] in self.baseline_top_10:
+                        self.baseline_top_10[x[0]] += 1
+                    else:
+                        self.baseline_top_10[x[0]] = 1
+                ######
+
+                for x in new_words_10:
+                    if not x[0] in vocab:
+                        print "**************", x
+                for x in new_words_1:
+                    if not x[0] in vocab:
+                        print "***********************", x
 
                 if category in [x[0] for x in new_words_10]:
                     hit_at_10 += 1
@@ -116,6 +151,12 @@ class Zero_Shooter:
                 new_ref = ' '.join(ref)
                 self.zero_shot_refs[region_id] = [new_ref]
 
+        with open(self.modelpath  + 'baseline_frequencies_top1.json', 'w') as f:
+            json.dump(self.baseline_top_1, f)
+        with open(self.modelpath  + 'baseline_frequencies_top5.json', 'w') as f:
+            json.dump(self.baseline_top_5, f)
+        with open(self.modelpath  + 'baseline_frequencies_top10.json', 'w') as f:
+            json.dump(self.baseline_top_10, f)
 
         print "non-nouns: ", self.non_noun_counter, " of ", len(self.candidates), " -> ", round(self.non_noun_counter / float(len(self.candidates))* 100, 2)
         return hit_at_1/ float(len(self.candidates)), hit_at_2/ float(len(self.candidates)), hit_at_5/ float(len(self.candidates)), \
@@ -140,6 +181,7 @@ class Zero_Shooter:
                 new_vec = embeddings.words2embedding_weighted(cand_words, cand_probs, use_reduced_vector_space)
                 if new_vec is not None:
                     new_word = embeddings.get_words_for_vector(new_vec, 1, use_reduced_vector_space)
+
                     ref = self.refs[region_id][0].split()
                     ref[index] = new_word[0][0]
                     new_ref = ' '.join(ref)
@@ -156,26 +198,26 @@ class Zero_Shooter:
 
 if __name__ == '__main__':
 
-    #cats = ['laptop', 'bus', 'horse']
-    cats = ['all']
-    use_reduced_vector_space = False # todo generate
-    use_only_names = True
-    exchange_all_words = False
+    cats = ['laptop', 'bus', 'horse']
+    #cats = ['all']
+    use_reduced_vector_space = True    # vary: only words from vocab or full GloVe
+    use_only_names = True               # vary: only noun candidates for zero-shot naming or all words in the space
+    exchange_all_words = False          # vary: exchange all words or only the nouns (like normally)
     numbr_candidates = 10
     print "Number of vectors used for combination: ", numbr_candidates
     print "Reduced model: ", use_reduced_vector_space
 
 
     for c in cats:
-        model = '/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_' + c + '/'
+        model = '/mnt/Data/zero_shot_reg/src/eval/model/with_reduced_cats_' + c + '/'
         zs = Zero_Shooter(model, numbr_candidates)
         embed = helper.word_embeddings.Embeddings(model, use_only_names)
-
 
         if use_reduced_vector_space:
             word_model = embed.init_reduced_embeddings()
         else:
             word_model = embed.get_global_model()
+        print "vocab embeddings: ", len(word_model.vocab)
 
        # print zs.words_that_are_names
         print "**** ", c
@@ -199,13 +241,16 @@ if __name__ == '__main__':
  #       print "all words: ", zs.word_counter
 #        print "Percentage: ", zs.zero_shot_counter / float(zs.word_counter)
         print "Word changed: ", zs.word_changed_counter / float(zs.zero_shot_counter)
+        print "All words number: ", zs.word_counter
+        print "All zero-shot procedures number: ", zs.zero_shot_counter
+        print "% affected: ", round((zs.zero_shot_counter / float(zs.word_counter)) * 100, 2)
 
         if exchange_all_words:
             name = 'all'
         else:
             name = 'nouns'
-        with open(model + 'zero_shot_refs_' + str(c) + '.json', 'w') as f:
-            json.dump(zs.zero_shot_refs, f)
+   #     with open(model + 'zero_shot_refs_' + str(c) + '.json', 'w') as f:  #TODO einkommentieren
+  #          json.dump(zs.zero_shot_refs, f)
 
 
 
