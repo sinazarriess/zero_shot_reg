@@ -3,6 +3,9 @@ import params as p
 import json
 import numpy as np
 
+# store data from the training for later application of the LSTM
+# usually, the method in the main.py is used, not this separate script
+
 if __name__ == '__main__':
 
     ###### !!!!!!!! add words or cats to be left out!
