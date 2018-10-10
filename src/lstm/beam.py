@@ -2,6 +2,10 @@ import numpy as np
 import heapq
 import params
 
+## Code extracted from the original experiment.py by Tanti et al., containing all code for the generation of a
+# sequence with the LSTM
+# https://github.com/mtanti/rnn-role/blob/master/experiment.py
+
 class Search:
 
     def __init__(self, index_to_token, keep_unknowntoken=False):
