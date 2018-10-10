@@ -8,6 +8,10 @@ from pprint import pprint
 
 model_path = 'model/with_reduced_vocab/'
 
+## This script serves to analyze the predictions of the LSTM if it is trained with
+## incomplete data. All training expressions which contain a specific word (indicated by the name of the model) are
+## moved into the test set and therefore unseen for the model. This script generates a dictionary for a comparison
+## of the predicitions with the human expressions.
 
 class Analyse():
     def __init__(self):

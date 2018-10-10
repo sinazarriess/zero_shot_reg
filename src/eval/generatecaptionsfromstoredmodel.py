@@ -9,6 +9,11 @@ import time
 import operator
 import ast
 
+## The purpose of this class is to seperate the application of the model (i.e. the generation of sequences) from the
+## training code. It works with a model that is stored as a file, this allows to run the script on another computer than
+## the training, if desired.
+## Methods include a beam search and a greedy search.
+
 edge_index = 0
 unknown_index = 1
 
@@ -34,11 +39,13 @@ class RefsGenerator:
         self.alternatives_dict = defaultdict()
         self.accumulated_variance = 0
 
+    ## read in the region IDs for which the model is supposed to generate expressions (costum split)
     def read_excluded_ids(self):
         with open(self.model_dir + 'refs_moved_to_test.json', 'r') as f:
             ids = f.readline()
             return ast.literal_eval(ids)
 
+    ## read stored model from file
     def initialize_model(self):
         self.imported_meta = tf.train.import_meta_graph(self.model_dir + 'inject_refcoco_refrnn_compositional_3_512_1/model.meta')
         graph = tf.get_default_graph()
@@ -48,6 +55,7 @@ class RefsGenerator:
         predictions = graph.get_tensor_by_name('softmax/prediction:0')
         self.last_prediction = predictions[:, -1]
 
+    ## generate expressions for the test set with a greedy strategy
     def generate_refs_greedily(self, excluded_ids = []):
         self.excluded = excluded_ids
         with tf.Session() as sess:
@@ -100,6 +108,7 @@ class RefsGenerator:
 
             print "Average utterance length greedy: ", average_utterance_length/float(utterance_counter)
 
+    ## generate expressions for the test set with a beam search algorithm
     def generate_refs_with_beam(self):
         with tf.Session() as sess:
             self.imported_meta.restore(sess, tf.train.latest_checkpoint(
@@ -117,6 +126,7 @@ class RefsGenerator:
             print "Average utterance length beam: ", searcher.get_average_ref_len()
 
 
+    ## store expressions in files
     def save_refs(self, captionslist, name):
 
         dict4eval = defaultdict(list)
@@ -131,9 +141,11 @@ class RefsGenerator:
         with open(self.model_dir + name + '.json', 'w') as f:
             json.dump(dict4eval, f)
 
+        # was used for unknown analysis
         with open(self.model_dir + 'highest_prob_candidates_' + str(self.number_of_candidates) + '.json', 'w') as f:
             json.dump(self.candidates4eval, f)
 
+        # basis for zero-shot application!
         with open(self.model_dir + 'all_highest_probs_' + str(self.number_of_candidates) + '.json', 'w') as f:
             json.dump(self.alternatives_dict, f)
 
@@ -149,7 +161,7 @@ if __name__ == "__main__":
     gen.save_refs(gen.captions_greedy, 'restoredmodel_refs_greedy')
 
     print "mean variance: ", gen.accumulated_variance / float(len(gen.captions_greedy))
-    # start = time.time()
+    # start = time.time()   #for performance analysis
     # gen.generate_refs_with_beam()
     # end = time.time()
     # print (end - start)

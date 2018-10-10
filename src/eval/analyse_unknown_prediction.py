@@ -9,9 +9,19 @@ import statistics
 import utils
 import ast
 
+## This script serves to analyze the predictions of the LSTM if it is trained with
+## incomplete data. All training expressions which contain a specific word (indicated by the name of the model) are
+## moved into the test set and therefore unseen for the model. This script allows to count the frequency of "unknown"
+## predictions, generates a dictionary for a convenient comparison of human expressions, expressions with "unknown" and
+## expressions without "unknown" and visualizes the image data together with a printing of the other data.
+## "without unknown" in this case refers to a model that ignores the unknown token when predicted (as it is done in the
+## original code). In addition, a method of this class counts the frequency of categories.
+
 modelpath = 'model/with_reduced_cats_horse/' #with_unknown
 file2analyse = 'restoredmodel_refs_greedy.json' #'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json'
-
+path_to_bb = '../../data/mscoco_bbdf.json.gz'
+path_to_refdef = './../../data/refcoco_refdf.json.gz'
+images_path = '/mnt/Data/zero_shot_reg/coco-caption/images/train2014/'
 
 class Analyse:
 
@@ -22,7 +32,7 @@ class Analyse:
         self.regionids = list()
 
     def read_files(self):
-        with open(modelpath + 'test.json', "r") as f: # TODO Achtung
+        with open(modelpath + 'test.json', "r") as f:
             self.reference = json.load(f)
 
         with open(modelpath + 'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') as f:
@@ -38,8 +48,8 @@ class Analyse:
             self.unknown_candidate = json.load(f)
 
         self.categories = utils.read_in_cats()
-        self.refcoco_data = pd.read_json("./../../data/refcoco_refdf.json.gz", orient="split", compression="gzip")
-        self.bounding_boxes = pd.read_json('../../data/mscoco_bbdf.json.gz', orient="split", compression="gzip")
+        self.refcoco_data = pd.read_json(path_to_refdef, orient="split", compression="gzip")
+        self.bounding_boxes = pd.read_json(path_to_bb, orient="split", compression="gzip")
 
         print "Number of images in test set: ", len(self.reference.keys())
 
@@ -49,10 +59,10 @@ class Analyse:
         for refex_id in self.unknown_candidate:
             comparison = defaultdict()
             for word in self.unknown_candidate[refex_id]:
-              #  if "UNKNOWN" in word:                                        #TODO
+              #  if "UNKNOWN" in word:
                 unknown_counter += 1
                 comparison['reflist'] = self.reference[refex_id]
-#                    comparison['original generated caption'] = self.without_unknown_candidate[refex_id] #TODO
+              #      comparison['original generated caption'] = self.without_unknown_candidate[refex_id]
                 comparison['with unknown'] = self.unknown_candidate[refex_id]
                 self.analysis_dict[refex_id] = comparison
 
@@ -113,7 +123,7 @@ class Analyse:
 
         if region_id >= 0:
             img_id = data[region_id]['image_id']
-            filename = "/mnt/Data/zero_shot_reg/coco-caption/images/train2014/COCO_train2014_" + str(img_id).zfill(
+            filename = images_path + "COCO_train2014_" + str(img_id).zfill(
                 12) + ".jpg"
             bb_pt1 = (int(data[region_id]['bb'][0]), int(data[region_id]['bb'][1]))
             bb_pt2 = (bb_pt1[0] + int(data[region_id]['bb'][2]), bb_pt1[1] + int(data[region_id]['bb'][3]))
@@ -133,7 +143,7 @@ class Analyse:
             print "average utterance length (with unknown): ", average_length / len(data)
             for reg_id in data:
                 img_id = data[reg_id]['image_id']
-                filename = "/mnt/Data/zero_shot_reg/coco-caption/images/train2014/COCO_train2014_" + str(img_id).zfill(
+                filename = images_path + "COCO_train2014_" + str(img_id).zfill(
                     12) + ".jpg"
                 bb_pt1 = (int(data[reg_id]['bb'][0]), int(data[reg_id]['bb'][1]))
                 bb_pt2 = (bb_pt1[0] + int(data[reg_id]['bb'][2]), bb_pt1[1] + int(data[reg_id]['bb'][3]))
@@ -175,10 +185,5 @@ class Analyse:
 if __name__ == "__main__":
     a = Analyse()
   #  a.analyse()
- #   a.visualize_unknown('274465')
-    #a.visualize_unknown('1098821')
-    #a.visualize_unknown('167394')
-
-  #  a.visualize_unknown('590024')
     #a.visualize_unknown('56524')
     a.analyze_freqs()
