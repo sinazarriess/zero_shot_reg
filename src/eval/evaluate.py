@@ -7,6 +7,8 @@ import ast
 
 ## Script for the data preparation for evaluation. Depending on the "costum" train/test splits,
 ## files are created containing reference expressions and generated expressions.
+## This evaluation checks the metrics for the expressions, BLEU and CIDeR. Evaluation of zero-shot
+## accuracies can be found in the zero-shot scripts directly.
 
 test_ids = []
 
