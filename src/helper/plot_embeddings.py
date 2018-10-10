@@ -6,6 +6,8 @@ from helper.word_embeddings import Embeddings
 
 #model = gensim.models.KeyedVectors.load_word2vec_format('GoogleNews-vectors-negative300.bin.gz', binary=True)
 
+# This code is based on this article!: https://medium.com/@aneesha/using-tsne-to-plot-a-subset-of-similar-words-from-word2vec-bb8eeaea6229
+
 def display_closestwords_tsnescatterplot(model, word):
     arr = np.empty((0, 300), dtype='f')
     word_labels = [word]
@@ -88,13 +90,7 @@ if __name__ == "__main__":
     #global_model = embeddings.get_global_model()
     word_model = embeddings.init_reduced_embeddings()
     display_closestwords_tsnescatterplot(word_model, 'person')
-    #print global_model.similar_by_word("mouse", 3)
-    #print  global_model.similar_by_word('refrigerator', 3)
 
     # embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_82/', True)
     # word_model = embeddings.init_reduced_embeddings()
     # print  global_model.similar_by_word('refridgerator', 3)
-    #
-    # embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_42/', True)
-    # word_model = embeddings.init_reduced_embeddings()
-    # print  word_model.similar_by_word('surfboard', 3)
