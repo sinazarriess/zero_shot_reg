@@ -27,7 +27,7 @@ class Analyse():
         with open(model_path + 'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') as f:
             self.generated_captions = json.load(f)
 
-        with open(model_path + 'test.json', "r") as f: # TODO Achtung
+        with open(model_path + 'test.json', "r") as f:
             self.reference = json.load(f)
 
         self.categories = utils.read_in_cats()
