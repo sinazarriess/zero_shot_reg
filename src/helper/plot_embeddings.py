@@ -40,6 +40,7 @@ def display_closestwords_tsnescatterplot(model, word):
     plt.ylim(y_coords.min() + 0.00005, y_coords.max() + 0.00005)
     plt.show()
 
+# display vectors from one space in one color and from the complete space in another color
 def display_closestwords_tsnescatterplot_compare(model, complete_model, word):
     arr = np.empty((0, 300), dtype='f')
     word_labels = [word]
@@ -87,9 +88,9 @@ def display_closestwords_tsnescatterplot_compare(model, complete_model, word):
 
 if __name__ == "__main__":
     embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_1/', True)
-    #global_model = embeddings.get_global_model()
+    global_model = embeddings.get_global_model()
     word_model = embeddings.init_reduced_embeddings()
-    display_closestwords_tsnescatterplot(word_model, 'person')
+    display_closestwords_tsnescatterplot(word_model, global_model,'person')
 
     # embeddings = Embeddings('/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_82/', True)
     # word_model = embeddings.init_reduced_embeddings()

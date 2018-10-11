@@ -208,6 +208,7 @@ class LSTM():
         for (idx, pair) in enumerate(zip(test, self.captions_greedy)):  # captions
             dict4eval[pair[0]] = [pair[1]]
 
+        # needed when "unknown" is the signal for zero-shot learning
         with open(self.results_data_dir + '/highest_prob_candidates_' + str(p.number_of_candidates) + '.json', 'w') as f:
             json.dump(self.candidates4eval, f)
 

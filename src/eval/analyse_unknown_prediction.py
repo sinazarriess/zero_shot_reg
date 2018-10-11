@@ -152,7 +152,7 @@ class Analyse:
                 print "\n\n\n"
                 print "region_id : ", reg_id
                 print "category : ", self.categories[str(data[reg_id]['cat'])]
-             #   print "alternative candidates : ", self.candidate_words[reg_id] #TODO
+             #   print "alternative candidates : ", self.candidate_words[reg_id] #does not work for all models, only for unknown analysis
                 pprint(data[reg_id])
                 cv.imshow('test', img)
                 c = cv.waitKey(0);
@@ -161,7 +161,7 @@ class Analyse:
 
 
     def analyze_freqs(self):
-        with open('resultstoken_freqs.json') as f: #TODO generisch?
+        with open('resultstoken_freqs.json') as f:
             alltokens = json.load(f)
         mean_freq = 0
         counter = 0

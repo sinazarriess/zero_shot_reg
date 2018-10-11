@@ -95,12 +95,12 @@ def do_zero_shot_all(categories):
                 print "accuracy hit@5: ", round(results[2] * 100, 2) , '%'
                 print "accuracy hit@10: ", round(results[3] * 100, 2) , '%'
                 print "correct hits before: ", round(zs.bus_counter / float(results[4]) * 100, 2), '%\n'
-             #   with open(model + 'zero_shot_refs_'+ str(c) + '.json', 'w') as f:  #TODO einkommentieren
-             #       json.dump(zs.zero_shot_refs, f)
+                with open(model + 'zero_shot_refs_'+ str(c) + '.json', 'w') as f:
+                    json.dump(zs.zero_shot_refs, f)
 
                 resultstring = category_name, str(round(results[0] * 100, 2)) + '\%', str(round(results[1] * 100, 2)) + '\%', \
                                str(round(results[2] * 100, 2)) + '\%', str(round(results[3] * 100, 2)) + '\%', str(results[4]) + "\\" + "\\ \\hline"
-             #   writer.writerow(resultstring)
+                writer.writerow(resultstring)
 
                 valid_categories += 1
             else:
