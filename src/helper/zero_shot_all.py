@@ -6,16 +6,27 @@ import json
 import os
 import ast
 
+
+## This script was built to easily apply zero-shot learning to all categories.
+# First, all embedding spaces have to be generated, then the normal ZeroShooter class (zero_shot.py) is
+# called with the correct space and parameters.
+
+modelpath = '/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_'
+cats_path = "../eval/cats.txt"
+
+# for each model, an embedding space is needed that contains all words that appear in the training plus
+# the category name
 def generate_all_embeddingspaces(categories):
     for key in categories.keys():
         if not key == '80':
-            path = '/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_' + key + '/'
+            path = modelpath + key + '/'
             if os.path.exists(path):
                 embeddings_instance = w.Embeddings(path, True)
                 if not os.path.exists(path + 'tmp_word2vec_only_names.txt'):
                     print "Generating embeddings for", categories[key][0].strip()
                     embeddings_instance.generate_reduced_w2v_file()
 
+# wrapper method to allow applying zero-shot learning to all categories at once
 def do_zero_shot_all(categories):
     acc_mean_hit_at_1 = 0
     acc_mean_hit_at_2 = 0
@@ -45,7 +56,7 @@ def do_zero_shot_all(categories):
     for c in categories.keys():
         category_name = (categories[c][0]).strip()
         if len(global_embeddings.get_global_vector(category_name)) > 0:
-            model = '/mnt/Data/zero_shot_reg/src/eval/new_models/with_reduced_cats_' + c + '/'
+            model = modelpath + c + '/'
             if os.path.exists(model + 'inject_refcoco_refrnn_compositional_3_512_1/4eval_greedy.json'):
                 test_regions = []
                 with open(model + 'refs_moved_to_test.json', 'r') as f:
@@ -122,10 +133,10 @@ def do_zero_shot_all(categories):
 
 if __name__ == "__main__":
     categories = defaultdict()
-    reader = csv.reader(open("../eval/cats.txt"))
+    reader = csv.reader(open(cats_path))
     for row in reader:
         categories[row[0].strip()] = row[1:]
 
-    #categories['74'] = ['  mouse']
+  #  categories['6'] = ['  bus'] ## to test one before running all
     #generate_all_embeddingspaces(categories)
     do_zero_shot_all(categories)

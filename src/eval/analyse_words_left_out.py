@@ -8,8 +8,11 @@ from pprint import pprint
 
 model_path = 'model/with_reduced_vocab/'
 
+## This script serves to analyze the predictions of the LSTM if it is trained with
+## incomplete data. All training expressions which contain a specific word (indicated by the name of the model) are
+## moved into the test set and therefore unseen for the model. This script generates a dictionary for a comparison
+## of the predicitions with the human expressions.
 
-# TODO run generatei2t again with new split in lstm.data
 class Analyse():
     def __init__(self):
         self.analysis_dict = defaultdict()
@@ -24,7 +27,7 @@ class Analyse():
         with open(model_path + 'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') as f:
             self.generated_captions = json.load(f)
 
-        with open(model_path + 'test.json', "r") as f: # TODO Achtung
+        with open(model_path + 'test.json', "r") as f:
             self.reference = json.load(f)
 
         self.categories = utils.read_in_cats()

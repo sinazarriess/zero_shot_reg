@@ -6,9 +6,11 @@ from tensorflow.contrib.tensorboard.plugins import projector
 from collections import defaultdict, OrderedDict
 import json
 
+## Code extracted from the original experiment.py by Tanti et al., containing all code for the creation of the LSTM
+# and the rest of the model: image input, word embedding layer and Softmax layer.
+# https://github.com/mtanti/rnn-role/blob/master/experiment.py
+
 class LSTM():
-
-
     def __init__(self, run, vocab_size, dir, cat_ids, i2t):
         self.results_data_dir = dir
         self.method = 'inject' # 'merge'
@@ -28,9 +30,11 @@ class LSTM():
         print('\n-' * 2)
         print(p.dataset, p.min_token_freq, p.layer_size, self.method, run, '\n')
 
+    # needed when network is stored and reloaded
     def final_prediction(self, tensor):
         return tensor[:, -1]
 
+    # Tensorflow implementation of complete model: image input, word embedding layer, LSTM, Softmax
     def build_network(self):
         tf.reset_default_graph()
 
@@ -118,6 +122,7 @@ class LSTM():
 
         self.summary_op = tf.summary.merge_all()
 
+    # generate sequences with the trained model with the beam search strategy
     def generate_captions(self, raw_dataset, beam, sess):
         oids = list()
         captions = list()
@@ -137,6 +142,7 @@ class LSTM():
             dict4eval[pair[0]] = pair[1]
         return dict4eval
 
+    # generate sequences with the trained model with the greedy search strategy
     def generate_captions_greedily(self, raw_dataset, sess):
 
         self.new_index2token= {int(key): value for key, value in self.index_to_token.iteritems()}
@@ -144,14 +150,13 @@ class LSTM():
         self.new_index2token[p.edge_index] = "EDGE"
 
         for (i, item) in enumerate(raw_dataset['test']['filenames']):
-            self.oids.append(int(item.split("_")[1])) ## int??
-      #  print "*************************************\n", self.oids
-     #   print "*************************************\n", self.excluded_ids
+            self.oids.append(int(item.split("_")[1]))
         average_utterance_length = 0
         utterance_counter = 0
 
         for (i, image_input) in enumerate(raw_dataset['test']['images']):
-           # if self.oids[i] in self.excluded_ids:                                    # TODO wieder einkommentieren!  Aus Testset nur relevante nehmen/alle nehmen :)
+           # if self.oids[i] in self.excluded_ids:                      # TODO remove comment if captions are supposed to be generated
+                                                                        # TODO for a costum test set! (not on all sequences)
             predictions_function = (lambda prefixes: sess.run(self.last_prediction, feed_dict={
                 self.seq_in: prefixes,
                 self.seq_len: [len(p) for p in prefixes],
@@ -198,11 +203,12 @@ class LSTM():
 
         test = list()
         for x in self.oids:
-          #  if x in self.excluded_ids:                                                           # TODO wieder einkommentieren!
+          #  if x in self.excluded_ids:                                                           # TODO see above
             test.append(x)
         for (idx, pair) in enumerate(zip(test, self.captions_greedy)):  # captions
             dict4eval[pair[0]] = [pair[1]]
 
+        # needed when "unknown" is the signal for zero-shot learning
         with open(self.results_data_dir + '/highest_prob_candidates_' + str(p.number_of_candidates) + '.json', 'w') as f:
             json.dump(self.candidates4eval, f)
 
@@ -212,13 +218,3 @@ class LSTM():
         return dict4eval
 
 
- #       sess = tf.Session()
- #       sess.run(tf.global_variables_initializer())
- #       writer = tf.summary.FileWriter('./logs/train ', sess.graph)
- #       tf.summary.histogram('predictions', self.predictions)
- #       summary_op = tf.summary.merge_all()
-
-
-#if __name__ == '__main__':
-#    model = LSTM(1,200)
-#    model.build_network()

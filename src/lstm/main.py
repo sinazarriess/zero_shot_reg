@@ -12,13 +12,18 @@ import os
 #import statistics
 import csv
 
-#words_excluded = ["juice", "soldier", "cookie", "watch", "lemon", "suv"]
-#categories_excluded = [ 73 ]  # 19-horse  73-laptop 6-bus 24-zebra
+bb_path = 'lstm/mscoco_bbdf.json.gz'
+results_data_dir = '/media/compute/vol/dsg/lilian/exp/with_reduced_cats_' + 'test'
 
 #  ATTENTION enter words that are supposed to be in the dictionary for zero-shot naming - e.g. the name of
-#  an excluded category or excluded words
-#words = [ "laptop" ] #["bus"] #"juice", "soldier", "cookie", "watch", "lemon", "suv"
+#  an excluded category or excluded words, if using this variable
+#  words = [ "laptop" ] #["bus"] #"juice", "soldier", "cookie", "watch", "lemon", "suv"
 
+#  words_excluded = ["juice", "soldier", "cookie", "watch", "lemon", "suv"]
+#  categories_excluded = [ 73 ]  # 19-horse  73-laptop 6-bus 24-zebra
+
+
+# store data for later application of stored LSTM (eval/generatecaptionsfromstoredmodel.py)
 def generate_indextotoken(data, results_dir, words):
 
     with open(results_dir + '/index2token.json', 'w') as f:
@@ -41,12 +46,13 @@ def generate_indextotoken(data, results_dir, words):
     # with open(results_dir + '/raw_dataset_train.txt', 'w') as f:
     #     np.savetxt(f, data.raw_dataset['train']['images'], delimiter=', ')
 
-    with open(results_dir+ '/additional_vocab.txt', 'w') as f:
+    with open(results_dir + '/additional_vocab.txt', 'w') as f:
         np.savetxt(f, words, delimiter=', ', fmt='%s')
 
+# find all regions displaying a category in order to set up new split
 def parse_categories(excluded_cats):
     tmp = np.zeros(91, dtype=int)
-    bounding_boxes = pd.read_json('lstm/mscoco_bbdf.json.gz', orient="split", compression="gzip")
+    bounding_boxes = pd.read_json(bb_path, orient="split", compression="gzip")
     #bounding_boxes = pd.read_json('../../data/mscoco_bbdf.json.gz', orient="split", compression="gzip")
     for index, row in bounding_boxes.iterrows():
    #     if str(row['cat']) in excluded_cats:
@@ -74,15 +80,12 @@ def parse_categories(excluded_cats):
 
 if __name__ == '__main__':
 
-
     print "******** Train model ****************"
-
-    results_data_dir = '/media/compute/vol/dsg/lilian/exp/with_reduced_cats_' + 'all'
-
     data_interface = data.Data(results_data_dir, [], [], [])
     print data_interface.vocab_size
     training = train.Learn(results_data_dir)
     for run in range(1, params.num_runs + 1):
+        # this is the configuration for a model that knows all categories! Therefore, the list of excluded IDs is empty.
         model = lstm.LSTM(run, data_interface.vocab_size, results_data_dir, [], data_interface.index_to_token)
         model.build_network()
         training.run_training(model, data_interface)
@@ -90,7 +93,7 @@ if __name__ == '__main__':
     generate_indextotoken(data_interface, results_data_dir, [])
 
 
-
+    ##### run training for all categories
     # categories = defaultdict()
     # # reader = csv.reader(open("../eval/cats.txt"))
     # reader = csv.reader(open("cats.txt"))

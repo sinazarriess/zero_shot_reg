@@ -2,12 +2,17 @@ import pandas as pd
 import json
 import os
 from collections import defaultdict
-import numpy as np
 import bleu
 import ast
 
+## Script for the data preparation for evaluation. Depending on the "costum" train/test splits,
+## files are created containing reference expressions and generated expressions.
+## This evaluation checks the metrics for the expressions, BLEU and CIDeR. Evaluation of zero-shot
+## accuracies can be found in the zero-shot scripts directly.
+
 test_ids = []
 
+path_to_splits = "../../data/refcoco_splits.json"
 candidate_path_1 = 'restoredmodel_captions_' #'jsons/4evalrefactoredexpinject_refcoco_refrnn_compositional_3_512_'  # original script output
 candidate_path_2 = 'jsons/4evalafter2ndrefactoringinject_refcoco_refrnn_compositional_3_512_' # output of oo code
 #reference_dict_path = 'jsons/test.json'
@@ -27,6 +32,7 @@ class Evalutator:
         self.prepare_ref_data()
 
 
+    ## run BLEU evaluation with the two lists of expressions
     def run_eval(self, candidate):
         with open(candidate, "r") as f:
             cand = json.load(f)  # correct format
@@ -43,13 +49,14 @@ class Evalutator:
 
         return bleu.evaluate(self.reference_dict_path, candidate, True)
 
+    ## generate lists of expressions, reference expressions from the corpus fit to the costum split
     def prepare_ref_data(self):
         with open(self.model_path + 'refs_moved_to_test.json', 'r') as f:
             ids = f.readline()
             extra_items_list = ast.literal_eval(ids)
 
         refcoco_data = pd.read_json(reference_data_path, orient="split", compression="gzip")
-        with open("../../data/refcoco_splits.json") as f:
+        with open(path_to_splits) as f:
             splits = json.load(f)
         splitmap = {'val': 'val', 'train': 'train', 'testA': 'test', 'testB': 'test'}
         # for every group in split --> for every entry --> make entry in new dict
@@ -81,14 +88,14 @@ class Evalutator:
 if __name__ == '__main__':
 
     #eval.run_eval('./jsons/no_unknown_for_comp.json')
-    #cats = ['laptop', 'bus', 'horse']
-    cats = ['all']
+    cats = ['laptop', 'bus', 'horse']
+    #cats = ['all']
 
     for c in cats:
         print '###############\n ', c
         model_path = 'new_models/with_reduced_cats_' + c +'/'
         eval = Evalutator(model_path)
-        eval.run_eval(model_path + 'zero_shot_refs_' + c + '.json') #'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') #'restoredmodel_refs_beam.json')
+        eval.run_eval(model_path + 'zero_shot_refs_all' + c + '.json') #'inject_refcoco_refrnn_compositional_3_512_1/4evalinject_refcoco_refrnn_compositional_3_512_1.json') #'restoredmodel_refs_beam.json')
         #eval.run_eval(model_path + 'zero_shot_refs_82.json')# 'inject_refcoco_refrnn_compositional_3_512_1/4eval_greedy.json')
         #eval.run_eval(model_path + 'restoredmodel_refs_greedy.json')
         score_1 = 0

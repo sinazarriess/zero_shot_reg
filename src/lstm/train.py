@@ -8,6 +8,8 @@ import beam
 import json
 from tensorflow.contrib.tensorboard.plugins import projector
 
+## Code extracted from the original experiment.py by Tanti et al., containing all code for the training of the LSTM.
+# https://github.com/mtanti/rnn-role/blob/master/experiment.py
 
 class Learn:
 
@@ -78,6 +80,7 @@ class Learn:
 
         saver.restore(sess, tf.train.latest_checkpoint(self.results_data_dir + '/' + model.model_name))
 
+        ### this is extracted to the LSTM class (see below, call to model.generate_captions...)
         # captions = list()
         # searcher = beam.Search(data.index_to_token, True)
         # for (i, image_input) in enumerate(data.raw_dataset['test']['images']):
@@ -100,13 +103,10 @@ class Learn:
         #     ])), file = f)
 
         print('\nDuration:', round(timeit.default_timer() - run_start), 's\n')
-       # print('\nevaluating...\n')
 
-#### new
         dict4eval = model.generate_captions_greedily(data.raw_dataset, sess)
         with open(self.results_data_dir + '/' + model.model_name + '/4eval_greedy.json', 'w') as f:
             json.dump(dict4eval, f)
 
         print('\n wrote new json\n')
 
-#        writer.close()

@@ -6,6 +6,8 @@ import json
 import params as p
 import ast
 
+# Script for preparing RefCOCO data for the training of the LSTM.
+
 class Data:
 
     def __init__(self, res_dir, words_excluded= [], cats_excluded = [], additional_words = [], imgfeatpath = "../data/refcoco/mscoco_vgg19_refcoco.npz",
@@ -64,23 +66,22 @@ class Data:
 
         # print "Objects",len(obj2phrases)
 
+    ## match visual data with referring expressions
+    #  and set up raw data with splits
     def prepare_data(self):
-        ############ match visual data with referring expressions ###############
-        ############### & set up raw data with splits ###########################
-
         img_counter = 0
         sentence_counter = 0
         selected_img_features = []
         test_list = []
         test_count = 0
 
-        # tqdm visualizes progress in the terminal :)
         self.raw_dataset = {'train': {'filenames': list(), 'images': list(), 'captions': list()},
                       'val': {'filenames': list(), 'images': list(), 'captions': list()},
                       'test': {'filenames': list(), 'images': list(), 'captions': list()}, }
         for obj2phrases_item in self.obj2phrases:  # tqdm(obj2phrases):
 
-            # [:,1] means: all indices of x along the first axis, but only index 1 along the second --> this list comprehension filters out features for one image
+            # [:,1] means: all indices of x along the first axis, but only index 1 along the second --> this list
+            # comprehension filters out features for one image
             features_for_imageId = self.extracted_features[
                 self.extracted_features[:, 1] == obj2phrases_item[0]]  # obj2phrases_item[0] is image id
             # this filters out features for the correct region
@@ -124,24 +125,12 @@ class Data:
 
 
         print 'raw data set', len(self.raw_dataset['train']['captions'])  # 42279
+        print len(self.raw_dataset['val']['images'])
+        print len(self.raw_dataset['test']['images'])
 
-        ''''' todo remove'''
-      #  print(len(self.raw_dataset['train']['images']) + len(self.raw_dataset['val']['images']) + \
-       #       len(self.raw_dataset['test']['images']))  # should be 49865
 
-      #  print(self.raw_dataset['train']['captions'][0])  # output : [[u'hidden', u'chocolate', u'donut'], [u'space', u'right', u'above', u'game']]
-      #  print(self.raw_dataset['train']['captions'][111])  # output : [[u'groom'], [u'groom'], [u'man']]
-
-        # to compare with original scripts: here, the order is like
-        # in im_mat from prepare_refcoco.py.
-     #   print("count", test_count)  # 49865
-     #   test_list = np.array(test_list)
-      #  print(test_list.shape)
-      #  print("test:: ", test_list[1][0])  # 0.0729042887688 --> like in original script (random number chosen)
-
+    # use only words with a minimum frequency for the vocabulary
     def clean_vocab(self):
-        ################################################################
-        # for min_token_freq in [ 3, 4, 5 ]:
         all_tokens = (token for caption_group in self.raw_dataset['train']['captions'] for caption in caption_group for token
                       in caption)
 
@@ -159,6 +148,7 @@ class Data:
         self.vocab_size = len(self.vocab) + 2  # + edge and unknown tokens
         print('vocab:', self.vocab_size)
 
+    # prepare captions and images in the correct format
     def parse(self, data):
         indexes = list()
         lens = list()
@@ -179,7 +169,7 @@ class Data:
             out_mat[row, :len(indexes_) + 1] = indexes_ + [self.edge_index]
         return (in_mat, out_mat, np.array(lens, np.int32), np.array(images))
 
-
+    # prepare data for the training: index and token allocation, sorting of images and captions for the splits
     def prepare_training(self):
         self.token_to_index = {token: i + 2 for (i, token) in enumerate(self.vocab)}
         self.index_to_token = {i + 2: token for (i, token) in enumerate(self.vocab)}
