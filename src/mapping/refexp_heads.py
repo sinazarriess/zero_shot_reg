@@ -20,7 +20,7 @@ NOHEAD = ['left','right','middle','center','corner','front','rightmost','leftmos
          'short','shortest','bottm','topmost','dirty','spiders','wtf','skinny','fat','sexy','jumping',
          'frontmost','yes','wearing','lil','creepy','serving','beside','beige','upper','lower','side',
          'facing','blurry','color','colour','dark','pink','foreground','facing','holding','forefront',\
-         'second','third','row','image','ok','hi','thanks']
+         'second','third','row','image','ok','hi','thanks','botom','towards','photo']
 
 
 #NOUNS = open('noun_list_long.txt').readlines()
@@ -159,11 +159,14 @@ for line in cats:
 region2cat = {rid:id2cat[cid] for (rid,cid) in zip(bbdf.region_id,bbdf.cat)}
 
 region2names = {}
+region2refexp = {}
 for ix, row in fulldf.iterrows():
     if row['region_id'] not in region2names:
         region2names[row['region_id']] = []
+        region2refexp[row['region_id']] = []
     if row['head'] != "":
         region2names[row['region_id']].append(row['head'])
+        region2refexp[row['region_id']].append(row['refexp'])
 
     
     cat_name = region2cat[row['region_id']]
@@ -181,10 +184,10 @@ for some_r in region2names:
     if len(region2names[some_r]) > 0:
         if some_r in region2ix:
             namelist = list(set(region2names[some_r]))
-            some_tup = [1,region2image[some_r],some_r,namelist,region2catid[some_r],region2ix[some_r]]
+            some_tup = [1,region2image[some_r],some_r,namelist,region2refexp[some_r],region2catid[some_r],region2ix[some_r]]
             newdf.append(some_tup)
 
-newdf = pd.DataFrame(newdf,columns=['i_corpus','image_id','region_id','names','cat','ix_Xfile'])
+newdf = pd.DataFrame(newdf,columns=['i_corpus','image_id','region_id','names','refexps','cat','ix_Xfile'])
 
 newdf.to_json('refcoco_refdf_heads.json.gz',compression='gzip', force_ascii=False, orient='split')
 
