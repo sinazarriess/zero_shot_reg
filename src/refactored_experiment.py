@@ -101,7 +101,6 @@ if __name__ == '__main__':
     refcoco_data = pd.read_json("../data/refcoco/refcoco_refdf.json.gz", orient="split", compression="gzip")
     with open("../data/refcoco/refcoco_splits.json") as f:
         splits = json.load(f)
-    #  TODO  generate own split for zero-shot learning
     splitmap = {'val':'val','train':'train','testA':'test','testB':'test'}
     # for every group in split --> for every entry --> make entry in new dict
     # file2split just translates testA and testB to "test"?
@@ -140,7 +139,7 @@ if __name__ == '__main__':
         features_for_objectId = features_for_imageId[features_for_imageId[:,2] == obj2phrases_item[1]]   #obj2phrases_item[1] is region id
 
         if len(features_for_objectId) > 0:
-            image = np.array(features_for_objectId[0])[3:]  # TODO WHY cut of 3 entries?
+            image = np.array(features_for_objectId[0])[3:]
             test_list.append(np.array(features_for_objectId[0])[3:])
             test_count += 1
 
@@ -199,7 +198,7 @@ if __name__ == '__main__':
         lens = list()
         images = list()
         for (caption_group, img) in zip(data['captions'], data['images']):
-            for caption in caption_group:
+            for caption in caption_group:             # := default is unknown
                 indexes_ = [token_to_index.get(token, unknown_index) for token in caption]
                 indexes.append(indexes_)
                 lens.append(len(indexes_) + 1)  # add 1 due to edge token

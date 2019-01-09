@@ -8,8 +8,13 @@ import beam
 import json
 from tensorflow.contrib.tensorboard.plugins import projector
 
+## Code extracted from the original experiment.py by Tanti et al., containing all code for the training of the LSTM.
+# https://github.com/mtanti/rnn-role/blob/master/experiment.py
 
 class Learn:
+
+    def __init__(self, results_dir):
+        self.results_data_dir = results_dir
 
     def run_training(self, model, data):
         sess = tf.Session()
@@ -17,7 +22,7 @@ class Learn:
         saver = tf.train.Saver()
 
         if p.use_tensorboard:
-            writer = tf.summary.FileWriter(p.results_data_dir + '/' + model.model_name + '/logs', sess.graph)
+            writer = tf.summary.FileWriter(self.results_data_dir + '/' + model.model_name + '/logs', sess.graph)
             # Attache the name 'embedding'
             model.ambedding.tensor_name = model.embeddings.name
             # Metafile which is described later
@@ -70,40 +75,38 @@ class Learn:
             if validation_loss > last_validation_loss:
                 break
             last_validation_loss = validation_loss
-            print("save model", p.results_data_dir + '/' + model.model_name + '/model')
-            saver.save(sess, p.results_data_dir + '/' + model.model_name + '/model')
+            print("save model", self.results_data_dir + '/' + model.model_name + '/model')
+            saver.save(sess, self.results_data_dir + '/' + model.model_name + '/model')
 
-        saver.restore(sess, tf.train.latest_checkpoint(p.results_data_dir + '/' + model.model_name))
+        saver.restore(sess, tf.train.latest_checkpoint(self.results_data_dir + '/' + model.model_name))
 
-        captions = list()
-        searcher = beam.Search(data.index_to_token)
-        for (i, image_input) in enumerate(data.raw_dataset['test']['images']):
-            caption = searcher.generate_sequence_beamsearch(lambda prefixes: sess.run(model.last_prediction, feed_dict={
-                model.seq_in: prefixes,
-                model.seq_len: [len(p) for p in prefixes],
-                model.image: image_input.reshape([1, -1]).repeat(len(prefixes), axis=0)
-            }))
-            captions.append(caption)
-
-        vocab_used = len({word for caption in captions for word in caption.split(' ')})
-
-        with open(p.results_data_dir + '/' + model.model_name + '/generated_captions.json', 'w') as f:
-            print(str(json.dumps([
-                {
-                    'image_id': image_id,
-                    'caption': caption
-                }
-                for (image_id, caption) in enumerate(captions)
-            ])), file = f)
+        ### this is extracted to the LSTM class (see below, call to model.generate_captions...)
+        # captions = list()
+        # searcher = beam.Search(data.index_to_token, True)
+        # for (i, image_input) in enumerate(data.raw_dataset['test']['images']):
+        #     caption = searcher.generate_sequence_beamsearch(lambda prefixes: sess.run(model.last_prediction, feed_dict={
+        #         model.seq_in: prefixes,
+        #         model.seq_len: [len(p) for p in prefixes],
+        #         model.image: image_input.reshape([1, -1]).repeat(len(prefixes), axis=0)
+        #     }))
+        #     captions.append(caption)
+        #
+        # vocab_used = len({word for caption in captions for word in caption.split(' ')})
+        #
+        # with open(self.results_data_dir + '/' + model.model_name + '/generated_captions.json', 'w') as f:
+        #     print(str(json.dumps([
+        #         {
+        #             'image_id': image_id,
+        #             'caption': caption
+        #         }
+        #         for (image_id, caption) in enumerate(captions)
+        #     ])), file = f)
 
         print('\nDuration:', round(timeit.default_timer() - run_start), 's\n')
-        print('\nevaluating...\n')
 
-#### new
-        dict4eval = model.generate_captions(data.raw_dataset, searcher, sess)
-        with open(p.results_data_dir + '/' + model.model_name + '/4eval' + model.model_name + '.json', 'w') as f:
+        dict4eval = model.generate_captions_greedily(data.raw_dataset, sess)
+        with open(self.results_data_dir + '/' + model.model_name + '/4eval_greedy.json', 'w') as f:
             json.dump(dict4eval, f)
 
         print('\n wrote new json\n')
 
-        writer.close()
